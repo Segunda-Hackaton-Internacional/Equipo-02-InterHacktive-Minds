@@ -1,4 +1,4 @@
-import { LayoutGrid, Upload, FileStack, ChartLine, Settings, User, Palette, BrainCircuit } from "lucide-react";
+import { LayoutGrid, FileStack, ChartLine, Settings, User, Palette, BrainCircuit } from "lucide-react";
 import type { SidebarData } from "../types/sideBar";
 
 export const sidebarData: SidebarData = {
@@ -11,16 +11,6 @@ export const sidebarData: SidebarData = {
     {
       title: 'Menú',
       items: [
-        {
-          title: "Inicio",
-          url: "/inicio",
-          icon: LayoutGrid,
-        },
-        {
-          title: "Subir archivos",
-          url: "/subir-archivos",
-          icon: Upload,
-        },
         {
           title: "Evaluación",
           url: "/evaluacion",
