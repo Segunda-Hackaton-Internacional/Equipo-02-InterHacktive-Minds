@@ -10,7 +10,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/atoms/ui/form"
-import { Input } from "@/components/atoms/ui/input"
+import { Input } from "@/components/atoms/ui/input-form"
 import {
     Select,
     SelectTrigger,
@@ -51,16 +51,23 @@ function baseValidationForType(type: FieldType): z.ZodString {
         case "address":
             schema = schema.max(100, "Máximo 100 caracteres")
             break
+        case "number":
+            schema = schema.regex(/^\d+$/, "Solo dígitos")
+            break
         default:
             break
     }
     return schema
 }
 
+
 function buildZodSchemaForField(field: FormField): z.ZodType<string, any, string> {
     let schema = baseValidationForType(field.type)
     if (field.required) {
         schema = schema.nonempty("Este campo es requerido")
+    }
+    else {
+        z.optional(z.string());
     }
     if (typeof field.minLength !== "undefined") {
         schema = schema.min(field.minLength, `Mínimo ${field.minLength} caracteres`)
@@ -97,10 +104,10 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
     initialData = {},
 }, ref) => {
     const flatFields = flattenFields(formDataConfig)
-    const shape: Record<string, z.ZodType<string, any, string>> = {}
+    const shape: Record<string, z.ZodDefault<z.ZodType<string, any, string>>> = {}
 
     flatFields.forEach((field) => {
-        shape[field.key] = buildZodSchemaForField(field)
+        shape[field.key] = buildZodSchemaForField(field).default("")
     })
 
     const finalSchema = z.object(shape)
@@ -137,7 +144,7 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
             render={({ field: controllerField }) => (
                 <FormItem
                     // Múltiples items en una fila:
-                    className={cn(field.width ? "max-w-full" : "flex-1", "flex flex-col")}
+                    className={cn(field.width ? "max-w-full" : "flex-1", "flex flex-col p-0.5")}
                     style={field.width ? { width: `${field.width}%` } : {}}
                 >
                     {field.placeholder && <FormLabel>{field.placeholder}</FormLabel>}

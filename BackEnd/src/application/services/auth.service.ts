@@ -2,13 +2,16 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import { IUserRepository } from '../../domain/repositories/user.repository';
 import { LoginDto, RefreshTokenDto, JwtTokensDto } from '../dtos/auth.dto';
+import { GetUserByIdUseCase, } from '../../application/useCases/user';
 import config from '../../infrastructure/config';
 
 export class AuthService {
     private userRepository: IUserRepository;
+    private getUserByIdUseCase: GetUserByIdUseCase;
 
     constructor(userRepository: IUserRepository) {
         this.userRepository = userRepository;
+        this.getUserByIdUseCase = new GetUserByIdUseCase(userRepository);
     }
 
     // Login - Solo devuelve access token
@@ -22,13 +25,12 @@ export class AuthService {
         if (!isPasswordValid) {
             throw new Error('Credenciales inválidas');
         }
-        const payload = { id: user.id, type: user.type };
+        const payload = { id: user.id, userType: user.userType };
         const accessToken = jwt.sign(payload, config.jwt.secret, { expiresIn: config.jwt.tokenExpiresIn });
         const refreshToken = jwt.sign(payload, config.jwt.secretRefresh, { expiresIn: config.jwt.refreshExpiresTokenIn });
         return {
             accessToken,
             refreshToken,
-            userType: user.type,
         };
     }
 
@@ -46,12 +48,11 @@ export class AuthService {
             const newAccessToken = jwt.sign(payload, config.jwt.secret, {
                 expiresIn: config.jwt.tokenExpiresIn
             });
-            
+
 
             return {
                 accessToken: newAccessToken,
                 refreshToken,
-                userType: decoded.type,  
             };
         } catch (error) {
             throw new Error((error as Error).message);
@@ -59,12 +60,21 @@ export class AuthService {
     }
 
 
-    public async getSession(token: string): Promise<{ userType: string }> {
+
+    public async getSession(token: string): Promise<any> {
+        console.log('Token:', token);
         try {
             const decoded: any = jwt.verify(token, config.jwt.secret);
-            return { userType: decoded.type };
+            const user = await this.getUserByIdUseCase.execute(decoded.id);
+            console.log(user);
+            if (!user) {
+                throw new Error('Usuario no encontrado');
+            }
+            return user;
         } catch (error) {
             throw new Error('Token inválido o expirado');
         }
     }
 }
+
+

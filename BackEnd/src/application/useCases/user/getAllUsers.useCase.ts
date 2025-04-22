@@ -1,11 +1,12 @@
-import { IUserRepository } from '../../../domain';
-import { UserResponseDto } from '../..';
+// src/application/useCases/user/getAllUsers.useCase.ts
+
+import { IUserRepository } from '../../../domain/repositories/user.repository';
+import { BaseUser } from '../../../domain/entities/user.entity';
 
 export class GetAllUsersUseCase {
-  constructor(private readonly userRepository: IUserRepository) {}
+  constructor(private readonly userRepo: IUserRepository) {}
 
-  public async execute(): Promise<UserResponseDto[]> {
-    return this.userRepository.findAll();
+  async execute(): Promise<BaseUser[]> {
+    return this.userRepo.findAll();
   }
 }
-

@@ -1,61 +1,47 @@
-import { Request, Response, NextFunction } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import config from '../../infrastructure/config';
+import { Request, Response, NextFunction } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
+import config from "../../infrastructure/config";
 
-// permite los roles que le pases en el array "roles"
-export const validateRoleMiddleware = (roles: string[]) => {
-    return (req: Request, res: Response, next: NextFunction): Response | void => {
-        // Extraer token del header "Authorization: Bearer <token>"
-        const authHeader = req.headers['authorization'];
-        const token = authHeader?.split(' ')[1];
+// Roles permitidos en toda la aplicación
+const VALID_ROLES = ["ADMIN", "OPERATOR"] as const;
+type ValidRole = (typeof VALID_ROLES)[number];
 
-        if (!token) {
-            return res.status(403).json({ message: 'Token no proporcionado' });
-        }
+export const validateRoleMiddleware =
+  (roles: ValidRole[] = []) =>
+  (req: Request, res: Response, next: NextFunction): Response | void => {
 
-        try {
-            // Verificar el token
-            const decoded = jwt.verify(token, config.jwt.secret) as JwtPayload;
+    const token = req.cookies?.accessToken as string | undefined;
 
-            // Extraer rol (type) y verificar contra el array de roles permitidos
-            const userRole = decoded.type;
-            if (!roles.includes(userRole)) {
-                return res.status(403).json({ message: 'Acceso denegado' });
-            }
+    if (!token) {
+      return res.status(403).json({ message: "Token no proporcionado" });
+    }
 
-            next();
-        } catch (error) {
-            return res.status(401).json({ message: 'Token inválido o expirado' });
-        }
+    let decoded: JwtPayload;
+    try {
+      decoded = jwt.verify(token, config.jwt.secret) as JwtPayload;
+    } catch {
+      return res.status(401).json({ message: "Token inválido o expirado" });
+    }
+
+    // 1) Validar que venga un campo 'type' dentro de los roles válidos
+    const userType = decoded.userType;
+    if (
+      typeof userType !== "string" ||
+      !VALID_ROLES.includes(userType as ValidRole)
+    ) {
+      return res.status(403).json({ message: "Rol inválido en token" });
+    }
+
+    // 2) Asignar sólo después de validar
+    req.user = {
+      id: decoded.id as string,
+      type: userType as ValidRole,
     };
-};
 
-//  valida que el rol sea INVESTIGADOR o EVALUADOR
-export const validateInvestigatorOrEvaluatorMiddleware = () => {
-    return (req: Request, res: Response, next: NextFunction): Response | void => {
-        // Extraer token del header "Authorization: Bearer <token>"
-        const authHeader = req.headers['authorization'];
-        const token = authHeader?.split(' ')[1];
+    // 3) Si se especificaron roles concretos, filtramos
+    if (roles.length > 0 && !roles.includes(req.user.type)) {
+      return res.status(403).json({ message: "Acceso denegado" });
+    }
 
-        if (!token) {
-            return res.status(403).json({ message: 'Token no proporcionado' });
-        }
-
-        try {
-            // Verificar el token
-            const decoded = jwt.verify(token, config.jwt.secret) as JwtPayload;
-
-            // Extraer rol (type)
-            const userRole = decoded.type;
-
-            // Verificar que el rol sea INVESTIGADOR o EVALUADOR
-            if (userRole !== 'INVESTIGADOR' && userRole !== 'EVALUADOR') {
-                return res.status(403).json({ message: 'Acceso denegado' });
-            }
-
-            next();
-        } catch (error) {
-            return res.status(401).json({ message: 'Token inválido o expirado' });
-        }
-    };
-};
+    next();
+  };

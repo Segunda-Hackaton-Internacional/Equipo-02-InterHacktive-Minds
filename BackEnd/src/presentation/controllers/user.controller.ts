@@ -1,24 +1,56 @@
 import { Request, Response, NextFunction } from "express";
 import {
-  CreateEvaluatorUseCase,
-  CreateInvestigatorUseCase,
+  CreateOperatorUseCase,
+  CreateAdminUseCase,
   GetAllUsersUseCase,
   GetUserByIdUseCase,
   UpdateUserUseCase,
   DeleteUserUseCase,
+} from "../../application/useCases/user";
+import {
   CreateUserDto,
-} from "../../application";
-import { User } from "../../domain";
+  UpdateUserDto,
+  UserResponseDto,
+  UsersListDto,
+} from "../../application/dtos/user.dto";
 
 export class UserController {
   constructor(
-    private readonly createEvaluatorUseCase: CreateInvestigatorUseCase,
-    private readonly createInvestigatorUseCase: CreateEvaluatorUseCase,
+    private readonly createOperatorUseCase: CreateOperatorUseCase,
+    private readonly createAdminUseCase: CreateAdminUseCase,
     private readonly getAllUsersUseCase: GetAllUsersUseCase,
     private readonly getUserByIdUseCase: GetUserByIdUseCase,
     private readonly updateUserUseCase: UpdateUserUseCase,
     private readonly deleteUserUseCase: DeleteUserUseCase
   ) {}
+
+  public createOperator = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const dto = req.body as CreateUserDto;
+      const user = await this.createOperatorUseCase.execute(dto);
+      res.status(201).json(this.toResponseDto(user));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public createAdmin = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const dto = req.body as CreateUserDto;
+      const user = await this.createAdminUseCase.execute(dto);
+      res.status(201).json(this.toResponseDto(user));
+    } catch (error) {
+      next(error);
+    }
+  };
 
   public getAll = async (
     req: Request,
@@ -27,7 +59,16 @@ export class UserController {
   ): Promise<void> => {
     try {
       const users = await this.getAllUsersUseCase.execute();
-      res.status(200).json(users);
+
+      const response: UsersListDto = {
+        users: users.map((u) => ({
+          id: u.id,
+          email: u.email,
+          userType: u.userType,
+        })),
+      };
+
+      res.status(200).json(response);
     } catch (error) {
       next(error);
     }
@@ -41,41 +82,19 @@ export class UserController {
     try {
       const { id } = req.params;
       const user = await this.getUserByIdUseCase.execute(id);
+
       if (!user) {
-        res.status(404).json({ message: "User not found" });
-      } else {
-        res.status(200).json(user);
+        res.status(404).json({ message: 'User not found' });
+        return;
       }
-    } catch (error) {
-      next(error);
-    }
-  };
 
-  public createEvaluator = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
-    try {
-      const newUser = await this.createEvaluatorUseCase.execute(
-        req.body as CreateUserDto
-      );
-      res.status(201).json(newUser);
-    } catch (error) {
-      next(error);
-    }
-  };
+      const response: UserResponseDto = {
+        id: user.id,
+        email: user.email,
+        userType: user.userType,
+      };
 
-  public createInvestigator = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
-    try {
-      const newUser = await this.createInvestigatorUseCase.execute(
-        req.body as CreateUserDto
-      );
-      res.status(201).json(newUser);
+      res.status(200).json(response);
     } catch (error) {
       next(error);
     }
@@ -87,16 +106,22 @@ export class UserController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { id } = req.params;
-      const updatedUser = await this.updateUserUseCase.execute(
-        id,
-        req.body as User
-      );
-      if (!updatedUser) {
-        res.status(404).json({ message: "User not found" });
-      } else {
-        res.status(200).json(updatedUser);
+      const userId = req.user!.id;  
+      const updateDto = req.body as UpdateUserDto;
+      const user = await this.updateUserUseCase.execute(userId, updateDto);
+
+      if (!user) {
+        res.status(404).json({ message: 'User not found' });
+        return;
       }
+
+      const response: UserResponseDto = {
+        id: user.id,
+        email: user.email,
+        userType: user.userType,
+      };
+
+      res.status(200).json(response);
     } catch (error) {
       next(error);
     }
@@ -108,15 +133,21 @@ export class UserController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const { id } = req.params;
-      const wasDeleted = await this.deleteUserUseCase.execute(id);
-      if (!wasDeleted) {
-        res.status(404).json({ message: "User not found" });
-      } else {
-        res.status(200).json({ message: "User deleted successfully" });
-      }
+      const userId = req.user!.id;
+      await this.deleteUserUseCase.execute(userId);
+      // No devolvemos cuerpo, solo 204 No Content
+      res.sendStatus(204);
     } catch (error) {
       next(error);
     }
   };
+
+  // Helper interno
+  private toResponseDto(user: any): UserResponseDto {
+    return {
+      id:       user.id,
+      email:    user.email,
+      userType: user.userType
+    };
+  }
 }

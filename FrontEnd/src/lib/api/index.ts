@@ -1,2 +1,2 @@
-export * from './userApi';
+export * from './axios';
 export * from './constants';

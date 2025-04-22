@@ -1,77 +1,63 @@
-import { User as UserModel } from '../../../infrastructure';
-import { User, IUserRepository } from '../../../domain';
-import { UpdateUserDto, UserResponseDto } from '../../../application';
-
+import { Types } from 'mongoose';
+import { IUserRepository } from '../../../domain/repositories/user.repository';
+import { BaseUser, UserType } from '../../../domain/entities/user.entity';
+import { UserModel, UserLean } from '../models/user.model';
 
 export class UserRepository implements IUserRepository {
-  public async findAll(): Promise<UserResponseDto[]> {
-    const users = await UserModel.find({});
-    return users.map((user) => ({
-      id: user._id.toString(),
-      name: user.name,
-      last_name: user.last_name,
-      email: user.email,
-      type: user.type,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    } as UserResponseDto));
+  async findAll(): Promise<BaseUser[]> {
+    const docs = await UserModel
+      .find()
+      .lean<UserLean[]>()
+      .exec();
+    return docs.map((doc: UserLean) => this.toDomain(doc));
   }
 
-  public async findById(id: string): Promise<UserResponseDto | null> {
-    const user = await UserModel.findById(id);
-    if (!user) return null;
-    return {
-      id: user._id.toString(),
-      name: user.name,
-      last_name: user.last_name,
-      email: user.email,
-      type: user.type,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    } as UserResponseDto;
+  async findById(id: string): Promise<BaseUser | null> {
+    if (!Types.ObjectId.isValid(id)) return null;
+    const doc = await UserModel
+      .findById(id)
+      .lean<UserLean>()
+      .exec();
+    return doc ? this.toDomain(doc) : null;
   }
 
-  public async findByEmail(email: string): Promise<User | null> {
-    const user = await UserModel.findOne({ email: email });
-    if (!user) return null;
+  async findByEmail(email: string): Promise<BaseUser | null> {
+    const doc = await UserModel
+      .findOne({ email })
+      .lean<UserLean>()
+      .exec();
+    return doc ? this.toDomain(doc) : null;
+  }
+
+  async create(data: Omit<BaseUser, 'id'>): Promise<BaseUser> {
+    const created = await UserModel.create(data);
+    const doc = created.toObject() as UserLean;
+    return this.toDomain(doc);
+  }
+
+  async update(
+    id: string,
+    data: Partial<Omit<BaseUser, 'id'>>
+  ): Promise<BaseUser | null> {
+    if (!Types.ObjectId.isValid(id)) return null;
+    const doc = await UserModel
+      .findByIdAndUpdate(id, data, { new: true, runValidators: true })
+      .lean<UserLean>()
+      .exec();
+    return doc ? this.toDomain(doc) : null;
+  }
+
+  async delete(id: string): Promise<void> {
+    if (!Types.ObjectId.isValid(id)) return;
+    await UserModel.findByIdAndDelete(id).exec();
+  }
+
+  private toDomain(doc: UserLean): BaseUser {
     return {
-      id: user._id.toString(),
-      name: user.name,
-      last_name: user.last_name,
-      email: user.email,
-      password: user.password,
-      type: user.type,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      id:       doc._id.toHexString(),
+      email:    doc.email,
+      password: doc.password,
+      userType: doc.userType as UserType,
     };
-  }
-
-  public async create(data: Omit<User, 'id'>): Promise<User> {
-    const user = await UserModel.create(data);
-    return {
-      id: user._id.toString(),
-      ...data,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    };
-  }
-
-  public async update(id: string, data: Partial<Omit<UpdateUserDto, 'id'>>): Promise<UserResponseDto | null> {
-    const user = await UserModel.findByIdAndUpdate(id, data, { new: true });
-    if (!user) return null;
-    return {
-      id: user._id.toString(),
-      name: user.name,
-      last_name: user.last_name,
-      email: user.email,
-      type: user.type,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    } as UserResponseDto;
-  }
-
-  public async delete(id: string): Promise<boolean> {
-    const result = await UserModel.findByIdAndDelete(id);
-    return result !== null;
   }
 }

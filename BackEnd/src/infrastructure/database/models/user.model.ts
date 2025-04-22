@@ -1,34 +1,38 @@
-// /src/infrastructure/database/models/user.model.ts
-import { Schema, model, Document, Types } from "mongoose";
+import { Schema, model, Document, Types, InferSchemaType } from 'mongoose';
 
-export type UserType = "EVALUADOR" | "INVESTIGADOR";
+const UserSchema = new Schema({
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+  userType: {
+    type: String,
+    enum: ['OPERATOR', 'ADMIN'],
+    required: true,
+  }
+}, {
+  timestamps: true,
+  toJSON: {
+    virtuals: true,
+    transform: (_, ret) => {
+      ret.id = ret._id.toString();
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    }
+  }
+});
 
-export interface UserDocument extends Document {
+type UserSchemaType = InferSchemaType<typeof UserSchema>;
+export interface UserDocument extends UserSchemaType, Document {
   _id: Types.ObjectId;
-  name: string;
-  last_name: string;
-  email: string;
-  password: string;
-  type: UserType;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const UserSchema = new Schema<UserDocument>(
-  {
-    name: { type: String, required: true },
-    last_name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    type: {
-      type: String,
-      enum: ["EVALUADOR", "INVESTIGADOR"],
-      required: true,
-    },
-  },
-  {
-    timestamps: true, // crea createdAt, updatedAt
-  }
-);
+export type UserLean = Omit<UserDocument, keyof Document> & {
+  _id: Types.ObjectId;
+  email: string; 
+  password: string;
+  userType: 'OPERATOR' | 'ADMIN';
+};
 
-export const User = model<UserDocument>("Usuarios", UserSchema);
+export const UserModel = model<UserDocument>('User', UserSchema);

@@ -1,4 +1,3 @@
-// /src/types/formTypes.ts
 import { JSX } from "react"
 
 /**
@@ -16,6 +15,7 @@ export type FieldType =
     | "address"
     | "user"
     | "textarea"
+    | "number"
 
 /**
  * Estructura base para cualquier campo.

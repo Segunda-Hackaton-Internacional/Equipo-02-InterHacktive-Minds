@@ -9,33 +9,34 @@ import { database } from './infrastructure';
 import {
   userRouter,
   authRouter,
+  processRouter,
+  statsRouter,
 } from './presentation/routes';
+import productRouter from './presentation/routes/product.router';
 
-// 1 Crear la aplicación Express
 const app = express();
 
 configureMiddlewares(app);
 
 
-// 2 Definición de rutas protegidas para cada rol
 app.use(`${config.api.conventionApi}/user`, userRouter);
 app.use(`${config.api.conventionApi}/auth`, authRouter);
+app.use(`${config.api.conventionApi}/process`, processRouter);
+app.use(`${config.api.conventionApi}/product`, productRouter);
+app.use(`${config.api.conventionApi}/stats`, statsRouter);
 
-// Ruta de prueba
+
 app.get('/', (req, res) => {
   res.send('Servidor Express funcionando correctamente');
 });
 
-// 3. Middleware para manejo de errores
 app.use(errorHandlerMiddleware);
 
 
-
-// Conectar la base de datos antes de iniciar el servidor
 const startServer = async () => {
 
   try {
-    await database.connect(); // Ensure DB is connected before starting the server
+    await database.connect(); 
     app.listen(config.server.port, () => {
       console.log(`🚀 Servidor corriendo en el puerto ${config.server.port}`);
     });
@@ -45,5 +46,4 @@ const startServer = async () => {
   }
 };
 
-// Iniciar la aplicación
 startServer();

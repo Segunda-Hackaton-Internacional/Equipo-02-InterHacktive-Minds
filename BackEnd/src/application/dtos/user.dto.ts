@@ -1,39 +1,31 @@
 import { Type, Static } from '@sinclair/typebox';
 
-export const UserTypeEnum = Type.Union([
-  Type.Literal('EVALUADOR'),
-  Type.Literal('INVESTIGADOR'),
-]);
-
+// 1. LO QUE ENTRA: creación y actualización
 export const CreateUserSchema = Type.Object({
-  name: Type.String(),
-  last_name: Type.String(),
-  email: Type.String({ format: 'email' }),
+  email:    Type.String({ format: 'email' }),
   password: Type.String(),
-  type: UserTypeEnum,
-  createdAt: Type.Optional(Type.Date()),
-  updatedAt: Type.Optional(Type.Date()),
 });
 export type CreateUserDto = Static<typeof CreateUserSchema>;
 
 
-export const UpdateUserSchema = Type.Partial(CreateUserSchema);
+export const UpdateUserSchema = Type.Partial(CreateUserSchema, {
+  description: 'Campos opcionales para actualizar un usuario'
+});
 export type UpdateUserDto = Static<typeof UpdateUserSchema>;
 
 
+// 2. LO QUE SALE: respuesta de un usuario o lista
 export const UserResponseSchema = Type.Object({
-  id: Type.String(),
-  name: Type.String(),
-  last_name: Type.String(),
+  id: Type.String(), // viene del virtual JSON
   email: Type.String({ format: 'email' }),
-  type: UserTypeEnum,
-  createdAt: Type.Date(),
-  updatedAt: Type.Date(),
+  userType: Type.Union([
+    Type.Literal('OPERATOR'),
+    Type.Literal('ADMIN')
+  ]),
 });
 export type UserResponseDto = Static<typeof UserResponseSchema>;
 
-// Esquema para una lista de usuarios
 export const UsersListSchema = Type.Object({
-  users: Type.Array(UserResponseSchema),
+  users: Type.Array(UserResponseSchema)
 });
 export type UsersListDto = Static<typeof UsersListSchema>;

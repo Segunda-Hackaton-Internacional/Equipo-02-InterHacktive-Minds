@@ -7,7 +7,8 @@ export class GetSessionUseCase {
         this.authService = authService;
     }
 
-    public async execute(token: string): Promise<{ userType: string }> {
+    public async execute(token: string): Promise<{ userType: string, email: string }> {
+        
         return this.authService.getSession(token);
     }
 }

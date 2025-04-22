@@ -1,14 +1,10 @@
-export type UserType = 'EVALUADOR' | 'INVESTIGADOR';
+export type UserType = 'OPERATOR' | 'ADMIN';
 
 export interface BaseUser {
   id: string;
-  name: string;
-  last_name: string;
   email: string;
   password: string;
-  type: UserType;
-  createdAt: Date;
-  updatedAt: Date;
+  userType: UserType;
 }
 
 export type User = BaseUser;

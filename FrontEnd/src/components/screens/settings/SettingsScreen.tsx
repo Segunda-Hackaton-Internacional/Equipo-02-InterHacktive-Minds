@@ -1,5 +1,5 @@
 import SettingsTemplate, { SidebarNavItem } from "@/components/templates/settings/SettingsTemplate"
-import { BrainCircuit, Palette, User  } from "lucide-react"
+import {User  } from "lucide-react"
 
 const sidebarNavItems: SidebarNavItem[] = [
     {
@@ -7,16 +7,7 @@ const sidebarNavItems: SidebarNavItem[] = [
         icon: <User size={18} />,
         href: '/ajustes/cuenta',
     },
-    {
-        title: 'Prompts',
-        icon: <BrainCircuit size={18} />,
-        href: '/ajustes/prompts',
-    },
-    {
-        title: 'Apariencia',
-        icon: <Palette size={18} />,
-        href: '/ajustes/apariencia',
-    },
+    
     
 ]
 

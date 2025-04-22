@@ -1,78 +1,87 @@
-import React from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { PieSlice, PIE_COLORS } from '@/types/statsTypes';
+import React from 'react';
 
-const data = [
-    { name: "Group A", value: 400 },
-    { name: "Group B", value: 300 },
-    { name: "Group C", value: 300 },
-    { name: "Group D", value: 200 }
-];
-
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
-
-const RADIAN = Math.PI / 180;
-const renderCustomizedLabel = ({
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    percent,
-    index
+const RAD = Math.PI / 180;
+const renderLabel = ({
+  cx, cy, midAngle, innerRadius, outerRadius, percent,
 }: any) => {
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-    return (
-        <text
-            x={x}
-            y={y}
-            fill="white"
-            textAnchor={x > cx ? "start" : "end"}
-            dominantBaseline="central"
-            fontSize="12px"
-            fontWeight="bold"
-        >
-            {`${(percent * 100).toFixed(0)}%`}
-        </text>
-    );
+  const r = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x = cx + r * Math.cos(-midAngle * RAD);
+  const y = cy + r * Math.sin(-midAngle * RAD);
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="#fff"
+      fontSize="12"
+      fontWeight="bold"
+      textAnchor={x > cx ? 'start' : 'end'}
+      dominantBaseline="central"
+    >
+      {(percent * 100).toFixed(0)}%
+    </text>
+  );
 };
 
-export const PieChartComponent: React.FC = () => {
-    return (
-        <div className="flex flex-col items-center w-full">
-            <ResponsiveContainer width="100%" height={350}>
-                <PieChart>
-                    <Pie
-                        data={data}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={renderCustomizedLabel}
-                        outerRadius="70%"
-                        fill="#8884d8"
-                        dataKey="value"
-                    >
-                        {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                    </Pie>
-                </PieChart>
-            </ResponsiveContainer>
+// simple translation map
+const LEGEND_LABELS: Record<string, string> = {
+  Operating: 'Operando',
+  Sent: 'Enviado',
+  Delivered: 'Entregado',
+};
 
-            {/* Leyenda personalizada */}
-            <div className="flex flex-wrap justify-center mt-4">
-                {data.map((entry, index) => (
-                    <div key={`legend-${index}`} className="flex items-center mx-2">
-                        <div
-                            className="w-4 h-4 rounded-full mr-2"
-                            style={{ backgroundColor: COLORS[index] }}
-                        ></div>
-                        <span className="text-sm font-medium">{entry.name}</span>
-                    </div>
-                ))}
-            </div>
+export const PieChartComponent: React.FC<{
+  data: PieSlice[];
+  loading?: boolean;
+}> = ({ data, loading }) => {
+  const [chartData, setChartData] = React.useState<PieSlice[]>(data);
+  React.useEffect(() => {
+    if (!loading) setChartData(data);
+  }, [data, loading]);
+
+  return (
+    <div className="relative flex flex-col items-center w-full">
+      <ResponsiveContainer width="100%" height={350}>
+        <PieChart>
+          <Pie
+            data={chartData}
+            dataKey="value"
+            cx="50%"
+            cy="50%"
+            outerRadius="70%"
+            labelLine={false}
+            label={renderLabel}
+          >
+            {chartData.map((_, i) => (
+              <Cell
+                key={i}
+                fill={PIE_COLORS[i % PIE_COLORS.length]}
+              />
+            ))}
+          </Pie>
+        </PieChart>
+      </ResponsiveContainer>
+
+      <div className="flex flex-wrap justify-center mt-4">
+        {chartData.map((slice, i) => (
+          <div key={i} className="flex items-center mx-2">
+            <div
+              className="w-4 h-4 rounded-full mr-2"
+              style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }}
+            />
+            <span className="text-sm font-medium">
+              {LEGEND_LABELS[slice.name] ?? slice.name}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm">
+          <span className="animate-pulse text-sm">Cargando…</span>
         </div>
-    );
+      )}
+    </div>
+  );
 };

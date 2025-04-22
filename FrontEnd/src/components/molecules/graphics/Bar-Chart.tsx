@@ -1,83 +1,64 @@
-"use client"
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Cell,
+  Tooltip,
+} from "recharts";
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
+type BarChartComponentProps = {
+  data: {
+    name: string;
+    total: number;
+  }[];
+};
 
-const data = [
-  {
-    name: "Jan",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Feb",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Mar",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Apr",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "May",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jun",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Jul",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Aug",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Sep",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Oct",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Nov",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-  {
-    name: "Dec",
-    total: Math.floor(Math.random() * 5000) + 1000,
-  },
-]
+const pleasantColors = [
+  "#A5D8FF", // light blue
+  "#B2F2BB", // soft green
+  "#FFD6A5", // soft orange
+  "#D0BFFF", // light purple
+  "#FFADAD", // soft red
+  "#CFFAFE", // cyan pastel
+  "#E4C1F9", // lavender
+  "#FFDAC1", // peach
+];
 
-export function BarChartComponent() {
+export function BarChartComponent({ data }: BarChartComponentProps) {
   return (
     <ResponsiveContainer width="100%" height={350}>
       <BarChart data={data}>
+        <CartesianGrid strokeDasharray="3 3" horizontal={true} vertical={false} />
         <XAxis
           dataKey="name"
           stroke="#888888"
           fontSize={12}
-          tickLine={false}
-          axisLine={false}
+          tickLine={true}
+          axisLine={true}
         />
         <YAxis
           stroke="#888888"
           fontSize={12}
           tickLine={false}
           axisLine={false}
-          tickFormatter={(value) => `$${value}`}
+          tickFormatter={(value) => `${value.toLocaleString()}`}
         />
-        <Bar
-          dataKey="total"
-          fill="currentColor"
-          radius={[4, 4, 0, 0]}
-          className="fill-primary"
+        <Tooltip
+          formatter={(value: number) => [`Total: ${value.toLocaleString()}`]}
+          cursor={{ fill: "#f9f9f9" }}
         />
+        <Bar dataKey="total" radius={[4, 4, 0, 0]}>
+          {data.map((_, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={pleasantColors[index % pleasantColors.length]}
+            />
+          ))}
+        </Bar>
       </BarChart>
     </ResponsiveContainer>
-  )
+  );
 }
