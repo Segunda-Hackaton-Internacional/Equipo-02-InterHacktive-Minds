@@ -1,8 +1,8 @@
 import AuthTemplate from '@/components/templates/AuthTemplate';
-import { FormField } from '@/types/formTypes';
 import { useAuthContext } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import type { User } from '@/types';
+import { FormField } from '@/types/formTypes';
+import { useNavigate } from 'react-router-dom';
 
 const loginFields: FormField[] = [
   { type: 'email', key: 'email', placeholder: 'Correo', required: true },
@@ -19,7 +19,9 @@ export default function AuthScreen() {
   const navigate = useNavigate();
 
   const handleLogin = async ({ email, password }: { email: string; password: string }) => {
-    await login(email, password);
+    //await login(email, password);
+    console.log("Email:", email);
+    console.log("Password:", password);
     navigate('/estadisticas');
   };
 
