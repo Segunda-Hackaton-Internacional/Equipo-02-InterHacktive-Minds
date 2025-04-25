@@ -18,7 +18,7 @@ export const sidebarData: SidebarData = {
         },
         {
           title: "Mis procesos",
-          url: "/estadisticas",
+          url: "/procesos",
           icon: Cpu,
         },
       ],

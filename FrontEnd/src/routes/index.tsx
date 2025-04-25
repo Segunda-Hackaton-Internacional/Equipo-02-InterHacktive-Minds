@@ -1,11 +1,12 @@
 import { LoadingFallback } from "@/components/molecules/LoadingFallback";
 import { lazy, Suspense } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 const Auth = lazy(() => import("../components/screens/AuthScreen"));
 const Layout = lazy(() => import("../components/screens/LayoutScreen"));
 const Dashboard = lazy(() => import("../components/screens/DashboardScreen"));
 const Products = lazy(() => import("../components/screens/ProductsScreen"));
+const Proceses = lazy(() => import("../components/screens/ProcessScreen"));
 
 const UnauthorizedErrorScreen = lazy(
   () => import("../components/screens/errors/401")
@@ -47,6 +48,7 @@ export const AppRoutes = () => {
             <Route element={<OperadorRoutes />}>
               <Route path="estadisticas" element={<Dashboard />} />
               <Route path="productos" element={<Products />} />
+              <Route path="procesos" element={<Proceses />} />
             </Route>
           </Route>
 
