@@ -56,9 +56,9 @@ const SimpleCard = ({
           </div>
         </div>
         <img
-          src={card.imageSrc}
+          src={card.title === 'Maracuya' ? 'https://www.svgrepo.com/show/406279/mango.svg' : card.title === 'Pitahaya' ? 'https://img.freepik.com/free-psd/vibrant-dragon-fruit-duo-watercolor-delight_191095-81014.jpg?t=st=1745792115~exp=1745795715~hmac=74282146550a8ae4204ee3c79a49bba666b25d5d20bff23b0bd0a7e8bedd759b&w=740' : card.imageSrc}
           alt={card.imageAlt}
-          className="h-auto w-full rounded-xl object-cover max-h-64"
+          className="h-64 w-full rounded-xl object-contain bg-white p-2"
         />
       </div>
     </div>
