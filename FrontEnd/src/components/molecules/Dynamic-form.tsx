@@ -1,31 +1,31 @@
-import React, { useEffect, forwardRef, useImperativeHandle } from "react"
-import { useForm, FormProvider } from "react-hook-form"
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { cn } from "@/lib/utils"
 import {
     FormControl,
-    FormField as ShadcnFormField,
     FormItem,
     FormLabel,
     FormMessage,
+    FormField as ShadcnFormField,
 } from "@/components/atoms/ui/form"
 import { Input } from "@/components/atoms/ui/input-form"
 import {
     Select,
-    SelectTrigger,
-    SelectValue,
     SelectContent,
     SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/atoms/ui/select"
 import { Textarea } from "@/components/atoms/ui/textarea"
+import { cn } from "@/lib/utils"
 import type {
+    CustomFormField,
+    FieldType,
     FormField,
     SelectFormField,
-    CustomFormField,
     TextAreaFormField,
-    FieldType,
 } from "@/types/formTypes"
+import { zodResolver } from "@hookform/resolvers/zod"
+import React, { forwardRef, useEffect, useImperativeHandle } from "react"
+import { FormProvider, useForm } from "react-hook-form"
+import { z } from "zod"
 
 function baseValidationForType(type: FieldType): z.ZodString {
     let schema = z.string().trim()

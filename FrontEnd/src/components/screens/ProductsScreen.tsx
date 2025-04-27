@@ -1,17 +1,18 @@
-import  {
-  useEffect,
-  useMemo,
-  useState,
-} from 'react'
-import ProductTemplate from '@/components/templates/ProductTemplate'
-import ModalForm from '@/components/organisms/dialogs/ModalForm'
-import { ColumnConfig } from '@/types/table'
 import { Button } from '@/components/atoms/ui/button'
 import { Calendar } from '@/components/atoms/ui/calendar'
+import ModalForm from '@/components/organisms/dialogs/ModalForm'
+import ProductTemplate from '@/components/templates/ProductTemplate'
+import { ColumnConfig } from '@/types/table'
+import {
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 import { toast } from 'sonner'
 
-import { useProductStore } from '@/hooks/flux/product/useProductStore'
 import { useProductActions } from '@/hooks/flux/product/useProductActions'
+import { useProductStore } from '@/hooks/flux/product/useProductStore'
+import { MateriaPrimaNombreChoose } from '../atoms/ui/choose-materia-prima'
 
 const usd = (v: number) =>
   `$${v.toLocaleString(undefined, {
@@ -51,11 +52,18 @@ function columns({
         { label: 'Eliminar', onClick: onDelete },
       ],
     },
+    {id: 'choose', 
+      type: 'selection',
+        headerLabel: 'Nombre', 
+        renderType: 'badgeWithText', // Optional: to display as badges
+        searchable: true 
+     }
   ]
 }
 
 export default function ProductScreen() {
   const { products } = useProductStore()
+  
   const {
     loadUserProducts,
     addProduct,
@@ -71,17 +79,33 @@ export default function ProductScreen() {
   // ** Para el modal de creación **
   const [createOpen, setCreateOpen] = useState(false)
   const [expirationDate, setExpirationDate] = useState<Date>(new Date())
-
+  const [selectedProduct, setSelectedProduct] = useState('');
+  const [nameTouched, setNameTouched] = useState(false);
+  
+  
   const handleCreate = async (data: any) => {
     try {
-      await addProduct({
-        name: data.name,
-        price: data.price,
-        quantity: data.quantity,
+
+      if (!nameTouched) {
+        setNameTouched(true); 
+        toast.error('Por favor seleccione un producto');
+        return;
+      }
+
+      const finalData = {
+        ...data,
         expirationDate: expirationDate.toISOString(),
-      })
+        name: selectedProduct
+      }
+  
+      console.log(finalData)
+
+      await addProduct(finalData)
+      
       toast.success('Producto creado')
       setCreateOpen(false)
+      
+      
     } catch {
       toast.error('Error al crear producto')
     }
@@ -89,7 +113,19 @@ export default function ProductScreen() {
 
   const createFields = [
     [
-      { type: '', key: 'name', placeholder: 'Nombre', required: true },
+      {
+        type: 'custom',
+        key: 'name',
+        placeholder: 'Nombre',
+        component: (
+          <MateriaPrimaNombreChoose required
+          onChange={setSelectedProduct}
+          name="name" 
+          value={selectedProduct}
+          onBlur={() => setNameTouched(true)} />
+        ),
+      },
+        
       { type: 'number', key: 'price', placeholder: 'Precio (USD)', required: true },
     ],
     [

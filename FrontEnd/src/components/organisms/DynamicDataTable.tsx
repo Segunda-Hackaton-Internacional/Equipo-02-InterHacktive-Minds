@@ -1,11 +1,11 @@
-import React from "react"
-import { ColumnDef, FilterFn } from "@tanstack/react-table"
-import { DataTable } from "./Data-table"
-import { Checkbox } from "@/components/atoms/ui/checkbox"
 import { Badge } from "@/components/atoms/ui/badge"
-import { DataTableRowActions } from "@/components/molecules/table/Data-table-row-actions"
+import { Checkbox } from "@/components/atoms/ui/checkbox"
 import { DataTableColumnHeader } from "@/components/molecules/table/Data-table-column-header"
+import { DataTableRowActions } from "@/components/molecules/table/Data-table-row-actions"
 import { ColumnConfig } from "@/types/table"
+import { ColumnDef, FilterFn } from "@tanstack/react-table"
+import React from "react"
+import { DataTable } from "./Data-table"
 
 /** 
  * Filtro local: filtra el valor de la celda según el filtro
