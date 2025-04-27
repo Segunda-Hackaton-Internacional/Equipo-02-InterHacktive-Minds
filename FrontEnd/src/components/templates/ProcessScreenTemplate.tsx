@@ -5,38 +5,42 @@ import {
   CarouselItem,
   CarouselNavigation,
 } from '@/components/atoms/ui/dashboards-carousel';
-import { SimpleCard } from '../atoms/ui/card-with-image';
+import { Status } from '@/lib/utils/dataManagement';
+import { StatsCard } from '../molecules/Stats-card';
 import DashboardTemplate from './DashBoardTemplate';
-  
-// Mock data for cards (replace with your actual data)
-const cardsData = [
-  {
-    title: "Card 1",
-    description: "Description for card 1",
-    imageSrc: "https://placehold.co/600x400",
-    imageAlt: "Card 1 Image",
-  },
-  {
-    title: "Card 2",
-    description: "A longer description that might wrap to multiple lines, forcing the card height to adjust dynamically.",
-    imageSrc: "https://placehold.co/600x400",
-    imageAlt: "Card 2 Image",
-  },
-  // Add more cards as needed...
-];
+import { ArrayOfCardsMateriasPrimas } from './MateriaPrimaTemplate';
 
-export function CarouselBasic() {
+  
+
+
+export function CarouselBasic({dashboardData, materiasPrimasData}: {
+  dashboardData: {
+    pieSeries: { name: string; value: number }[];
+  };
+
+  materiasPrimasData: Array<{
+    title: string;
+    statuses: Record<Status, number>;
+    totalQuantity: number;
+    imageSrc: string;
+    imageAlt: string;
+    description: string;
+    statusDetails: Array<{ status: string; quantity: number }>;
+  }>;
+
+}
+) {
   return (
     <div className="relative w-full h-full">
       <Carousel>
         <CarouselContent className="h-full">
           {/* Item 1 - Dashboard (unchanged) */}
-          <CarouselItem className="h-full p-4 w-full">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 h-full overflow-y-auto">
+          <CarouselItem className="p-4 w-full">
+            <div className="overflow-y-auto">
               <DashboardTemplate 
                 cardsData={[]} 
                 lineSeries={[]} 
-                pieSeries={[]} 
+                pieSeries = {dashboardData.pieSeries} 
                 range={{
                   from: new Date(),
                   to: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
@@ -49,13 +53,13 @@ export function CarouselBasic() {
 
           {/* Item 2 - Grid of SimpleCards */}
           <CarouselItem className="p-4 w-full">
-            <div className="flex flex-col gap-1 h-full overflow-y-auto">
-              {cardsData.map((card, index) => (
-                <div key={index} className="h-auto"> {/* Let height adjust dynamically */}
-                  <SimpleCard card={card} />
-                </div>
-              ))}
-            </div>
+          <ArrayOfCardsMateriasPrimas data={materiasPrimasData} />
+          </CarouselItem>
+
+          <CarouselItem className="p-4 w-full">
+            <StatsCard title={'Statscard'} value={'56'} description={'show value'}>
+              
+            </StatsCard>
           </CarouselItem>
 
           {/* Other Items (unchanged) */}

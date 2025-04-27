@@ -1,17 +1,17 @@
+import type { StatsCardProps } from "@/components/molecules/Stats-card";
 import { StatsGrid } from "@/components/organisms/Stats-grid";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../atoms/ui/tabs";
-import { BarChartComponent } from "../molecules/graphics/Bar-Chart";
+import type { LinePoint, PieSlice } from "@/types/statsTypes";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../atoms/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../atoms/ui/tabs";
+import { DatePickerWithRange } from "../molecules/Date-range-picker";
+import { BarChartComponent } from "../molecules/graphics/Bar-Chart";
 import { LineChartComponent } from "../molecules/graphics/Line-Chart";
 import { PieChartComponent } from "../molecules/graphics/Pie-Chart";
-import type { StatsCardProps } from "@/components/molecules/Stats-card"
-import type { LinePoint, PieSlice } from "@/types/statsTypes"
-import { DatePickerWithRange } from "../molecules/Date-range-picker";
 
 export interface DashboardTemplateProps {
   cardsData: StatsCardProps[]
