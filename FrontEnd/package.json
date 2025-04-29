@@ -60,7 +60,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
-    "@types/flux": "^3.1.14",
     "@types/node": "^22.13.8",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
