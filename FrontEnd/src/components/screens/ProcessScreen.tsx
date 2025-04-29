@@ -1,52 +1,35 @@
 import { CarouselBasic } from "@/components/templates/ProcessScreenTemplate";
-import { assignStateToProduct, Status } from "@/lib/utils/dataManagement";
+import { assignStateToProduct, isDateBetweenDateOnly, Status } from "@/lib/utils/dataManagement";
+import { subTotalesDeProductos, totalPorStatus } from "@/lib/utils/productManagement";
+import { startOfDay, subMonths } from "date-fns";
+import { useState } from "react";
 
 
 export const ProcessScreen = () => {
 
-  const productWithStatus = assignStateToProduct();
+  // 1. date‐picker range
+    const [range, setRange] = useState({
+      from: startOfDay(subMonths(new Date(), 1)),
+      to: startOfDay(new Date()),
+    });
+
+  let productWithStatus = assignStateToProduct();
+
+  productWithStatus = productWithStatus.filter((product) =>
+    isDateBetweenDateOnly(product.expirationDate, range.from, range.to)
+  );
   
   //Sumar todos los subtotales de los productos 
-  const groupedProducts = productWithStatus.reduce((acc, product) => {
-    const key = `${product.name}_${product.status}`; // Unique key for name + status
+  const groupedProducts = subTotalesDeProductos({productWithStatus});
+
   
-    if (!acc[key]) {
-      acc[key] = {
-        name: product.name,
-        status: product.status,
-        quantity: product.quantity, // Initialize with the product's quantity
-        expirationDates: new Set<string>(), // Track unique expiration dates
-      };
-    } else {
-      acc[key].quantity += product.quantity; // Sum quantities
-    }
+  const totalByStatus = totalPorStatus({groupedProducts});
   
-    acc[key].expirationDates.add(product.expirationDate); // Track unique dates
-    return acc;
-  }, {} as Record<string, { name: string; status: Status; quantity: number; expirationDates: Set<string> }>);
-
-  //LOGEARLO
-
-  Object.values(groupedProducts).forEach((product) => {
-    console.log(
-      `Product: ${product.name} | ` +
-      `Status: ${product.status} | ` +
-      `Count: ${product.quantity}`
-    );
-  });
-
-  const totalByStatus = Object.values(groupedProducts).reduce((acc, product) => {
-    acc[product.status] = (acc[product.status] || 0) + product.quantity;
-    return acc;
-  }, {} as Record<string, number>);
-  
-  console.log("\n=== Total Quantity by Product ===");
-  Object.entries(totalByStatus).forEach(([name, total]) => {
-    console.log(`Product: ${name} | Total: ${total}`);
-  });
-
   // Prepara la informacion para el dashboard
 const dashboardData = {
+
+  onRangeChange: setRange,
+  range: range, 
   pieSeries: [
     { name: "Disponibles", value: totalByStatus[Status.DISPONIBLE] || 0 },
     { name: "Por Vencerse", value: totalByStatus[Status.POR_VENCER] || 0 },
@@ -54,7 +37,7 @@ const dashboardData = {
   ],
 }; 
 
-// Prepare data for Materias Primas cards - grouped by product name
+// Data para las materias primas
 const materiasPrimasData = Object.values(
   productWithStatus.reduce((acc, product) => {
     // If product doesn't exist in accumulator, initialize it
@@ -96,16 +79,7 @@ const materiasPrimasData = Object.values(
   }))
 }));
 
-console.table(materiasPrimasData.map(item => ({
-  Product: item.title,
-  Available: item.statuses[Status.DISPONIBLE],
-  'About to Expire': item.statuses[Status.POR_VENCER],
-  Expired: item.statuses[Status.VENCIDA],
-  Total: item.totalQuantity
-})));
 
-  
-  
   return (
     <div className="flex-1">
       <CarouselBasic dashboardData = {dashboardData}

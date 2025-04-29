@@ -15,6 +15,11 @@ import { ArrayOfCardsMateriasPrimas } from './MateriaPrimaTemplate';
 
 export function CarouselBasic({dashboardData, materiasPrimasData}: {
   dashboardData: {
+    onRangeChange: React.Dispatch<React.SetStateAction<{
+      from: Date;
+      to: Date;
+  }>>
+    range: {from: Date; to: Date;}
     pieSeries: { name: string; value: number }[];
   };
 
@@ -41,11 +46,8 @@ export function CarouselBasic({dashboardData, materiasPrimasData}: {
                 cardsData={[]} 
                 lineSeries={[]} 
                 pieSeries = {dashboardData.pieSeries} 
-                range={{
-                  from: new Date(),
-                  to: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-                }} 
-                onRangeChange={(range) => console.log(range)}
+                range={dashboardData.range} 
+                onRangeChange={dashboardData.onRangeChange}
                 barChartData={[]}
               />
             </div>

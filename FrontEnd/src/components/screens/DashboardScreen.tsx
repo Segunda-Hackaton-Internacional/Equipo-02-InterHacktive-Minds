@@ -1,4 +1,3 @@
-import { useEffect, useMemo, useState } from 'react';
 import { formatISO, startOfDay, subMonths } from 'date-fns';
 import {
   ArrowUpRight,
@@ -6,11 +5,12 @@ import {
   CheckCircle,
   XCircle,
 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 
-import DashboardTemplate from '../templates/DashBoardTemplate';
 import type { StatsCardProps } from '@/components/molecules/Stats-card';
-import { useProductStatsStore } from '@/hooks/flux/stats/useProductStatsStore';
 import { useProductStatsActions } from '@/hooks/flux/stats/useProductStatsActions';
+import { useProductStatsStore } from '@/hooks/flux/stats/useProductStatsStore';
+import DashboardTemplate from '../templates/DashBoardTemplate';
 
 export default function DashboardScreen() {
   // 1. date‐picker range
