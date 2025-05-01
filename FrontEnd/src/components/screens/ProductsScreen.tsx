@@ -13,6 +13,7 @@ import { toast } from 'sonner'
 import { useProductActions } from '@/hooks/flux/product/useProductActions'
 import { useProductStore } from '@/hooks/flux/product/useProductStore'
 import { MateriaPrimaNombreChoose } from '../atoms/ui/choose-materia-prima'
+import { CreateProductButton } from '../organisms/MateriaPrima-form'
 
 const usd = (v: number) =>
   `$${v.toLocaleString(undefined, {
@@ -177,7 +178,9 @@ export default function ProductScreen() {
         width="400px"
       />
       <Button onClick={() => setCreateOpen(true)}>Crear Producto</Button>
+      <CreateProductButton></CreateProductButton>
     </>
+    
   )
 
   return (

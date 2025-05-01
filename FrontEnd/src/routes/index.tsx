@@ -3,6 +3,7 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 const Auth = lazy(() => import("../components/screens/AuthScreen"));
+const AuthProvider = lazy(() => import("../components/screens/AuthFarmerScreen"))
 const Layout = lazy(() => import("../components/screens/LayoutScreen"));
 const Dashboard = lazy(() => import("../components/screens/DashboardScreen"));
 const Products = lazy(() => import("../components/screens/ProductsScreen"));
@@ -36,6 +37,8 @@ export const AppRoutes = () => {
           <Route path="/no-autorizado" element={<UnauthorizedErrorScreen />} />
 
           <Route path="/auth" element={<Auth />} />
+
+          <Route path="/auth-provider" element={<AuthProvider />} />
 
           {/* rutas con layout */}
           <Route path="/" element={<Layout />}>

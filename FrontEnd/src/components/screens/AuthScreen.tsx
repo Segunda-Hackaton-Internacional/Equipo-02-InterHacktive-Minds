@@ -1,8 +1,9 @@
 import AuthTemplate from '@/components/templates/AuthTemplate';
-import { FormField } from '@/types/formTypes';
 import { useAuthContext } from '@/context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import type { User } from '@/types';
+import { FormField } from '@/types/formTypes';
+import { useNavigate } from 'react-router-dom';
+import fondoFrutal from "../../assets/Fondo1.jpg";
 
 const loginFields: FormField[] = [
   { type: 'email', key: 'email', placeholder: 'Correo', required: true },
@@ -28,12 +29,22 @@ export default function AuthScreen() {
     navigate('/estadisticas');
   };
 
-  return (
-    <AuthTemplate
-      loginFields={loginFields}
-      registryFields={registryFields}
-      onLogin={handleLogin}
-      onRegister={handleRegister}
-    />
-  );
+    return (
+      <div className="relative">
+        <AuthTemplate
+          loginFields={loginFields}
+          registryFields={registryFields}
+          onLogin={handleLogin}
+          onRegister={handleRegister}
+          imageBackground={fondoFrutal}
+          textBelow='Si eres un proveedor crea aqui tu cuenta  '
+          blueLink={{
+            text: 'Crear Cuenta',
+            href: '/auth-provider' 
+          }}
+        />
+        
+      </div>
+    );
+  
 }
