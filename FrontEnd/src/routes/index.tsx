@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 const Auth = lazy(() => import("../components/screens/AuthScreen"));
 const AuthProvider = lazy(() => import("../components/screens/AuthFarmerScreen"))
+const Despacho = lazy(() => import("../components/screens/DespacharScreen"))
 const Layout = lazy(() => import("../components/screens/LayoutScreen"));
 const Dashboard = lazy(() => import("../components/screens/DashboardScreen"));
 const Products = lazy(() => import("../components/screens/ProductsScreen"));
@@ -52,6 +53,7 @@ export const AppRoutes = () => {
               <Route path="estadisticas" element={<Dashboard />} />
               <Route path="productos" element={<Products />} />
               <Route path="procesos" element={<Proceses />} />
+              <Route path="despachos" element={<Despacho />} />
             </Route>
           </Route>
 

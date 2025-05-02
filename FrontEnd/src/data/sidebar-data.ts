@@ -1,4 +1,4 @@
-import { Cpu, Presentation, Settings, ShoppingBasket, User } from "lucide-react";
+import { Cpu, Presentation, Send, Settings, ShoppingBasket, User } from "lucide-react";
 import type { SidebarData } from "../types/sideBar";
 
 export const sidebarData: SidebarData = {
@@ -21,6 +21,11 @@ export const sidebarData: SidebarData = {
           url: "/procesos",
           icon: Cpu,
         },
+        {
+          title: "Despachar",
+          url: "/despachos",
+          icon: Send
+        }
       ],
     },
     {
