@@ -3,13 +3,13 @@ import { cn } from '@/lib/utils';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, Transition, useMotionValue } from 'motion/react';
 import {
-    Children,
-    createContext,
-    ReactNode,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
+  Children,
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
 } from 'react';
 
 export type CarouselContextType = {
@@ -18,6 +18,8 @@ export type CarouselContextType = {
   itemsCount: number;
   setItemsCount: (newItemsCount: number) => void;
   disableDrag: boolean;
+  dialogIndices?: number[]; // indices numeros
+  onDialogTrigger?: (index: number) => void;
 };
 
 const CarouselContext = createContext<CarouselContextType | undefined>(
@@ -37,6 +39,8 @@ export type CarouselProviderProps = {
   initialIndex?: number;
   onIndexChange?: (newIndex: number) => void;
   disableDrag?: boolean;
+  dialogIndices?: number[]; // indices numeros
+  onDialogTrigger?: (index: number) => void; // funcion para cuando haga drag
 };
 
 function CarouselProvider({
@@ -44,6 +48,8 @@ function CarouselProvider({
   initialIndex = 0,
   onIndexChange,
   disableDrag = false,
+  dialogIndices = [], 
+  onDialogTrigger,
 }: CarouselProviderProps) {
   const [index, setIndex] = useState<number>(initialIndex);
   const [itemsCount, setItemsCount] = useState<number>(0);
@@ -65,6 +71,8 @@ function CarouselProvider({
         itemsCount,
         setItemsCount,
         disableDrag,
+        dialogIndices, 
+        onDialogTrigger, 
       }}
     >
       {children}
@@ -79,6 +87,8 @@ export type CarouselProps = {
   index?: number;
   onIndexChange?: (newIndex: number) => void;
   disableDrag?: boolean;
+  dialogIndices?: number[]; // Indices en donde apareceran los pop ups
+  onDialogTrigger?: (index: number) => void; // que hacer dentro de un pup up
 };
 
 function Carousel({
@@ -88,6 +98,8 @@ function Carousel({
   index: externalIndex,
   onIndexChange,
   disableDrag = false,
+  dialogIndices, 
+  onDialogTrigger
 }: CarouselProps) {
   const [internalIndex, setInternalIndex] = useState<number>(initialIndex);
   const isControlled = externalIndex !== undefined;
@@ -105,6 +117,8 @@ function Carousel({
       initialIndex={currentIndex}
       onIndexChange={handleIndexChange}
       disableDrag={disableDrag}
+      dialogIndices={dialogIndices}
+      onDialogTrigger={onDialogTrigger} 
     >
       <div className={cn('group/hover relative', className)}>
         <div className='overflow-hidden'>{children}</div>
@@ -237,7 +251,8 @@ function CarouselContent({
   className,
   transition,
 }: CarouselContentProps) {
-  const { index, setIndex, setItemsCount, disableDrag } = useCarousel();
+  const { index, setIndex, setItemsCount, disableDrag, dialogIndices = [],
+    onDialogTrigger } = useCarousel();
   const [visibleItemsCount, setVisibleItemsCount] = useState(1);
   const dragX = useMotionValue(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -278,9 +293,17 @@ function CarouselContent({
     const x = dragX.get();
 
     if (x <= -10 && index < itemsLength - 1) {
-      setIndex(index + 1);
+      const newIndex = index + 1;
+      setIndex(newIndex);
+      if (dialogIndices.includes(newIndex) && onDialogTrigger) {
+        onDialogTrigger(newIndex);
+      }
     } else if (x >= 10 && index > 0) {
-      setIndex(index - 1);
+      const newIndex = index - 1;
+      setIndex(newIndex);
+      if (dialogIndices.includes(newIndex) && onDialogTrigger) {
+        onDialogTrigger(newIndex);
+      }
     }
   };
 
@@ -342,8 +365,8 @@ function CarouselItem({ children, className }: CarouselItemProps) {
 }
 
 export {
-    Carousel,
-    CarouselContent, CarouselIndicator,
-    CarouselItem, CarouselNavigation, useCarousel
+  Carousel,
+  CarouselContent, CarouselIndicator,
+  CarouselItem, CarouselNavigation, useCarousel
 };
 
