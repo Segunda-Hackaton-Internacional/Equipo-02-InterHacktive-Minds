@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { UseCounterDemo } from "./Use-Counter";
 
@@ -8,12 +9,15 @@ interface LinkedCountersProps {
   processingTitle?: string;
 }
 
-export function LinkedCounters({
+export const LinkedCounters = React.forwardRef<
+  { getCounts: () => { available: number; processing: number } },
+  LinkedCountersProps
+>(({  // defaults
   availableInitialValue,
   processingInitialValue = 0,
   availableTitle = "Disponible...",
   processingTitle = "A procesar...",
-}: LinkedCountersProps) {
+}, ref) => {  // implementacion
   const [availableCount, setAvailableCount] = React.useState(availableInitialValue);
   const [processingCount, setProcessingCount] = React.useState(processingInitialValue);
 
@@ -50,6 +54,14 @@ export function LinkedCounters({
     setProcessingCount(processingInitialValue);
   };
 
+  React.useImperativeHandle(ref, () => ({
+    getCounts: () => ({
+      available: availableCount,
+      processing: processingCount
+    })
+  }));
+
+
   return (
     <div className="flex flex-col md:flex-row gap-4 w-full">
       <div className="flex-1 min-w-0">
@@ -77,4 +89,5 @@ export function LinkedCounters({
       </div>
     </div>
   );
-}
+});
+

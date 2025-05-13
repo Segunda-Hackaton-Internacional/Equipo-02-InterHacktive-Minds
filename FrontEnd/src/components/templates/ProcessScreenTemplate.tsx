@@ -7,7 +7,7 @@ import {
 } from '@/components/atoms/ui/dashboards-carousel';
 import { Status } from '@/lib/utils/dataManagement';
 import { Dialog, DialogContent, DialogTitle } from '@radix-ui/react-dialog';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MateriaPrimaWithCounters } from '../molecules/MateriaPrimaWithCounters';
 import DashboardTemplate from './DashBoardTemplate';
 import { ArrayOfCardsMateriasPrimas } from './MateriaPrimaTemplate';
@@ -33,6 +33,14 @@ export function CarouselBasic({ dashboardData, materiasPrimasData }: {
 }) {
   
   const [openDialogIndex, setOpenDialogIndex] = useState<number | null>(null);
+
+  //Tan pronto como empieze pantalla
+  useEffect(() => {
+    // si dialogConfigs existe
+    if (dialogConfigs[0]) {
+      setOpenDialogIndex(0);
+    }
+  }, []);
 
 
   const handleDialogTrigger = (index: number) => {
