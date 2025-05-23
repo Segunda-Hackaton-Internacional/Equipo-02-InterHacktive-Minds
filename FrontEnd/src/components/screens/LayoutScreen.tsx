@@ -1,10 +1,12 @@
-import { useAuthContext } from "@/context/AuthContext"
-import LayoutTemplate from "@/components/templates/LayoutTemplate"
-import { sidebarData } from "@/data/sidebar-data"
-import type { NavItem, SidebarData } from "@/types/sideBar"
+import LayoutTemplate from "@/components/templates/LayoutTemplate";
+import { useAuthContext } from "@/context/AuthContext";
+import { getSidebarData } from "@/data/sidebar-data";
+import type { NavItem, SidebarData } from "@/types/sideBar";
 
 export default function LayoutScreen() {
     const { user, logout } = useAuthContext()
+    
+    const sidebarData = getSidebarData(user?.type || null);
 
     function filterSidebarDataByRole(data: SidebarData, userRole: string): SidebarData {
         return {
