@@ -17,7 +17,8 @@ const NotFoundErrorScreen = lazy(
   () => import("../components/screens/errors/404")
 );
 
-const OperadorRoutes = lazy(() => import("./OperadorRoutes"));
+const OperadorRoutes = lazy (() => import("./OperadorRoutes"))
+const ProveedorRoutes = lazy(() => import("./ProveedorRoutes")); 
 
 const Settings = lazy(
   () => import("../components/screens/settings/SettingsScreen")
@@ -54,6 +55,12 @@ export const AppRoutes = () => {
               <Route path="productos" element={<Products />} />
               <Route path="procesos" element={<Proceses />} />
               <Route path="despachos" element={<Despacho />} />
+            </Route>
+
+            <Route element={<ProveedorRoutes  />}>
+              
+              <Route path="proveedorProductos" element={<Products />} />
+              
             </Route>
           </Route>
 

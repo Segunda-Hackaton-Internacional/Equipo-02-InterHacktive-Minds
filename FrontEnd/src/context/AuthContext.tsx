@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useEffect } from 'react';
-import { useAuthStore } from '@/hooks/flux/auth/useAuthStore';
 import { useAuthActions } from '@/hooks/flux/auth/useAuthActions';
+import { useAuthStore } from '@/hooks/flux/auth/useAuthStore';
+import React, { createContext, useContext, useEffect } from 'react';
 
 interface IAuthContext {
     user: ReturnType<typeof useAuthStore>['user'];
@@ -8,6 +8,8 @@ interface IAuthContext {
     login: (email: string, password: string) => Promise<void>;
     logout: () => Promise<void>;
     createAccount: (email: string, password: string) => Promise<void>;
+    createProviderAccount: (email: string, password: string) => Promise<void>;
+    
 }
 
 const AuthContext = createContext<IAuthContext | undefined>(undefined);
@@ -16,7 +18,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     children,
 }) => {
     const { user, loading } = useAuthStore();
-    const { loadUser, login, logout, register } = useAuthActions();
+    const { loadUser, login, logout, register, registerProvider } = useAuthActions();
 
     useEffect(() => {
         loadUser();
@@ -30,6 +32,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
                 login,
                 logout,
                 createAccount: register,
+                createProviderAccount: registerProvider
             }}
         >
             {children}

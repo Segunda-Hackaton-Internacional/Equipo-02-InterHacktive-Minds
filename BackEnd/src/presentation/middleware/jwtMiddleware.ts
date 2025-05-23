@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from "express";
+import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../../infrastructure/config";
 
 // Roles permitidos en toda la aplicación
-const VALID_ROLES = ["ADMIN", "OPERATOR"] as const;
+const VALID_ROLES = ["ADMIN", "OPERATOR", "PROVEEDOR"] as const;
 type ValidRole = (typeof VALID_ROLES)[number];
 
 export const validateRoleMiddleware =

@@ -2,6 +2,7 @@ import {
     loadUser,
     login as loginThunk,
     logout as logoutThunk,
+    registerProvider as registerProviderThunk,
     register as registerThunk,
 } from '@/actions/auth/authThunks';
 import type { LoginInput } from '@/types';
@@ -13,4 +14,6 @@ export const useAuthActions = () => ({
     logout: logoutThunk,
     register: (email: string, password: string) =>
         registerThunk({ email, password }),
+    registerProvider: (email: string, password: string) =>
+        registerProviderThunk({ email, password })
 });

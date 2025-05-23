@@ -1,5 +1,7 @@
-import { LoginInput, User } from "@/types";
+import { useAuthContext } from "@/context/AuthContext";
+import { User } from "@/types";
 import { FormField } from "@/types/formTypes";
+import { useNavigate } from "react-router-dom";
 import fondoFrutal from "../../assets/agricultorFondo.jpg";
 import AuthTemplate from "../templates/AuthTemplate";
 
@@ -14,13 +16,26 @@ const registryFields: FormField[] = [
 ];
 
 export default function AuthFarmerScreen(){
+
+  const {login, createProviderAccount} = useAuthContext();
+
+  const navigate = useNavigate();
+
+  const handleLogin = async ({ email, password }: { email: string; password: string }) => {
+    await login(email, password);
+    navigate('/proveedorProductos');
+    
+  };
+
+  const handleRegister = async (user: User) => {
+    await createProviderAccount(user.email, user.password);
+    
+  };
+
+
     return (<AuthTemplate loginFields={loginFields} 
         registryFields={registryFields} 
-        onLogin={function (values: LoginInput): void {
-        console.log(values)
-    } } onRegister={function (values: User): void {
-        console.log(values)
-    } } imageBackground={fondoFrutal}>
+        onLogin={handleLogin} onRegister={handleRegister} imageBackground={fondoFrutal}>
         
     </AuthTemplate>)
 }

@@ -1,4 +1,4 @@
-import { Type, Static } from '@sinclair/typebox';
+import { Static, Type } from '@sinclair/typebox';
 
 // 1. LO QUE ENTRA: creación y actualización
 export const CreateUserSchema = Type.Object({
@@ -20,7 +20,8 @@ export const UserResponseSchema = Type.Object({
   email: Type.String({ format: 'email' }),
   userType: Type.Union([
     Type.Literal('OPERATOR'),
-    Type.Literal('ADMIN')
+    Type.Literal('ADMIN'),
+    Type.Literal('PROVEEDOR')
   ]),
 });
 export type UserResponseDto = Static<typeof UserResponseSchema>;

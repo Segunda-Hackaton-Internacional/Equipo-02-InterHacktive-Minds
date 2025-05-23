@@ -17,6 +17,11 @@ export const sidebarData: SidebarData = {
           icon: ShoppingBasket,
         },
         {
+          title: "Mis productos",
+          url: "/proveedorProductos",
+          icon: ShoppingBasket,
+        },
+        {
           title: "Mis procesos",
           url: "/procesos",
           icon: Cpu,

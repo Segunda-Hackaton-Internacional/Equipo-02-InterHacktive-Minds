@@ -1,11 +1,11 @@
-import { Schema, model, Document, Types, InferSchemaType } from 'mongoose';
+import { Document, InferSchemaType, Schema, Types, model } from 'mongoose';
 
 const UserSchema = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   userType: {
     type: String,
-    enum: ['OPERATOR', 'ADMIN'],
+    enum: ['OPERATOR', 'ADMIN', 'PROVEEDOR'],
     required: true,
   }
 }, {
@@ -32,7 +32,7 @@ export type UserLean = Omit<UserDocument, keyof Document> & {
   _id: Types.ObjectId;
   email: string; 
   password: string;
-  userType: 'OPERATOR' | 'ADMIN';
+  userType: 'OPERATOR' | 'ADMIN' | 'PROVEEDOR';
 };
 
 export const UserModel = model<UserDocument>('User', UserSchema);

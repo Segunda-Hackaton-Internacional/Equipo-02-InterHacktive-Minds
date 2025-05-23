@@ -1,25 +1,27 @@
 // src/infrastructure/controllers/user.controller.ts
 
-import { Request, Response, NextFunction } from "express";
-import {
-  CreateOperatorUseCase,
-  CreateAdminUseCase,
-  GetAllUsersUseCase,
-  GetUserByIdUseCase,
-  UpdateUserUseCase,
-  DeleteUserUseCase,
-} from "../../application/useCases/user";
+import { NextFunction, Request, Response } from "express";
 import {
   CreateUserDto,
   UpdateUserDto,
   UserResponseDto,
   UsersListDto,
 } from "../../application/dtos/user.dto";
+import {
+  CreateAdminUseCase,
+  CreateOperatorUseCase,
+  DeleteUserUseCase,
+  GetAllUsersUseCase,
+  GetUserByIdUseCase,
+  UpdateUserUseCase,
+} from "../../application/useCases/user";
+import { CreateProviderUseCase } from "../../application/useCases/user/createProveedor.useCase";
 
 export class UserController {
   constructor(
     private readonly createOperatorUseCase: CreateOperatorUseCase,
     private readonly createAdminUseCase: CreateAdminUseCase,
+    private readonly createProviderUseCase: CreateProviderUseCase,
     private readonly getAllUsersUseCase: GetAllUsersUseCase,
     private readonly getUserByIdUseCase: GetUserByIdUseCase,
     private readonly updateUserUseCase: UpdateUserUseCase,
@@ -34,6 +36,20 @@ export class UserController {
     try {
       const dto = req.body as CreateUserDto;
       const user = await this.createOperatorUseCase.execute(dto);
+      res.status(201).json(this.toResponseDto(user));
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public createProvider = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const dto = req.body as CreateUserDto;
+      const user = await this.createProviderUseCase.execute(dto);
       res.status(201).json(this.toResponseDto(user));
     } catch (error) {
       next(error);

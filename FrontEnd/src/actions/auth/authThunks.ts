@@ -1,7 +1,7 @@
-import { authApi } from '@/lib/api/authApi';
 import { AppDispatcher } from '@/dispatcher/AppDispatcher';
-import { authReq, authOk, authErr, logoutA } from './authActions';
-import type { User, LoginInput } from '@/types';
+import { authApi } from '@/lib/api/authApi';
+import type { LoginInput, User } from '@/types';
+import { authErr, authOk, authReq, logoutA } from './authActions';
 
 const norm = (u: any): User => {
     const { userType, ...rest } = u;
@@ -40,6 +40,17 @@ export const register = async (payload: { email: string; password: string }) => 
     AppDispatcher.dispatch(authReq());
     try {
         await authApi.post('/user/operador', payload);
+        await authApi.post('/auth/login', payload);
+        await loadUser();
+    } catch (e) {
+        AppDispatcher.dispatch(authErr((e as Error).message));
+    }
+};
+
+export const registerProvider = async (payload: { email: string; password: string }) => {
+    AppDispatcher.dispatch(authReq());
+    try {
+        await authApi.post('/user/proveedor', payload);  
         await authApi.post('/auth/login', payload);
         await loadUser();
     } catch (e) {
