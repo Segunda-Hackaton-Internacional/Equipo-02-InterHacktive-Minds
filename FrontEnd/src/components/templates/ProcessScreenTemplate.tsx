@@ -12,7 +12,7 @@ import { MateriaPrimaWithCounters } from '../molecules/MateriaPrimaWithCounters'
 import DashboardTemplate from './DashBoardTemplate';
 import { ArrayOfCardsMateriasPrimas } from './MateriaPrimaTemplate';
 
-export function CarouselBasic({ dashboardData, materiasPrimasData }: {
+export function CarouselBasic({ dashboardData, materiasPrimasData }: Readonly<{
   dashboardData: {
     onRangeChange: React.Dispatch<React.SetStateAction<{
       from: Date;
@@ -30,7 +30,7 @@ export function CarouselBasic({ dashboardData, materiasPrimasData }: {
     description: string;
     statusDetails: Array<{ status: string; quantity: number }>;
   }>;
-}) {
+}>) {
   
   const [openDialogIndex, setOpenDialogIndex] = useState<number | null>(null);
 

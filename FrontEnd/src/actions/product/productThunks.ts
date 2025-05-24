@@ -1,10 +1,14 @@
-import { axiosApi } from '@/lib/api/axios';
 import { AppDispatcher } from '@/dispatcher/AppDispatcher';
-import {
-    productsReq, productsOk, productsErr,
-    productAddOk, productUpdateOk, productDelOk,
-} from './productActions';
+import { axiosApi } from '@/lib/api/axios';
 import type { Product } from '@/types/productType';
+import {
+    productAddOk,
+    productDelOk,
+    productsErr,
+    productsOk,
+    productsReq,
+    productUpdateOk,
+} from './productActions';
 
 /* ---------- helpers ---------- */
 
@@ -27,6 +31,7 @@ export const loadUserProducts = async () => {
 export const addProduct = async (payload: Omit<Product, 'id' | 'userId'>) => {
     const { data } = await axiosApi.post<Product>('/product', payload);
     AppDispatcher.dispatch(productAddOk(data));
+    return data;
 };
 
 export const updateProduct = async (id: string, partial: Partial<Product>) => {

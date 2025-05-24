@@ -1,14 +1,14 @@
 import { Router } from 'express';
-import { ProductController } from '../../presentation';
-import { ProductRepository } from '../../infrastructure';
-import { 
+import {
   CreateProductUseCase,
+  DeleteProductUseCase,
   GetAllProductsUseCase,
   GetProductByIdUseCase,
-  UpdateProductUseCase,
-  DeleteProductUseCase,
   GetProductsByUserUseCase,
+  UpdateProductUseCase,
 } from '../../application';
+import { ProductRepository } from '../../infrastructure';
+import { ProductController } from '../../presentation';
 import { validateRoleMiddleware } from '../middleware/jwtMiddleware';
 
 const router = Router();
@@ -31,11 +31,11 @@ const controller = new ProductController(
 
 );
 
-router.post('/', validateRoleMiddleware(['OPERATOR', 'ADMIN']) ,controller.create);
-router.get('/user',validateRoleMiddleware(['OPERATOR', 'ADMIN']), controller.getByUser);
-router.get('/', validateRoleMiddleware(['OPERATOR', 'ADMIN']) ,controller.getAll);
-router.get('/:id', validateRoleMiddleware(['OPERATOR', 'ADMIN']),controller.getById);
-router.patch('/:id',validateRoleMiddleware(['OPERATOR', 'ADMIN']), controller.update);
-router.delete('/:id',validateRoleMiddleware(['OPERATOR', 'ADMIN']), controller.delete);
+router.post('/', validateRoleMiddleware(['OPERATOR', 'ADMIN', 'PROVEEDOR']) ,controller.create);
+router.get('/user',validateRoleMiddleware(['OPERATOR', 'ADMIN', 'PROVEEDOR']), controller.getByUser);
+router.get('/', validateRoleMiddleware(['OPERATOR', 'ADMIN', 'PROVEEDOR']) ,controller.getAll);
+router.get('/:id', validateRoleMiddleware(['OPERATOR', 'ADMIN', 'PROVEEDOR']),controller.getById);
+router.patch('/:id',validateRoleMiddleware(['OPERATOR', 'ADMIN', 'PROVEEDOR']), controller.update);
+router.delete('/:id',validateRoleMiddleware(['OPERATOR', 'ADMIN', 'PROVEEDOR']), controller.delete);
 
 export default router;

@@ -1,4 +1,5 @@
 
+import { Product } from '@/types/productType';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '../atoms/ui/button';
@@ -7,7 +8,7 @@ import { MateriaPrimaNombreChoose } from '../atoms/ui/choose-materia-prima';
 import ModalForm from './dialogs/ModalForm';
 
 interface CreateProductModalFormButtonProps {
-    addProduct: (productData: any) => Promise<void>;
+    addProduct: (productData: any) => Promise<Product>;
   }
 
 export default function CreateProductModalFormButtom({

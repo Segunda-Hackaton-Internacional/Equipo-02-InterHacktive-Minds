@@ -15,6 +15,10 @@ export const ProcessScreen = () => {
 
   let productWithStatus = assignStateToProduct();
 
+  productWithStatus = productWithStatus.filter(
+  p => p.name !== "Mermelada de Mango y Pitahaya"
+);
+
   productWithStatus = productWithStatus.filter((product) =>
     isDateBetweenDateOnly(product.expirationDate, range.from, range.to)
   );
@@ -41,8 +45,7 @@ const dashboardData = {
 const materiasPrimasData = Object.values(
   productWithStatus.reduce((acc, product) => {
     // If product doesn't exist in accumulator, initialize it
-    if (!acc[product.name]) {
-      acc[product.name] = {
+    acc[product.name] ??= {
         title: product.name,
         statuses: {
           [Status.DISPONIBLE]: 0,
@@ -53,7 +56,6 @@ const materiasPrimasData = Object.values(
         imageSrc: "https://placehold.co/600x400",
         imageAlt: `${product.name} image`
       };
-    }
     
     // Add status information
     acc[product.name].statuses[product.status] = 
