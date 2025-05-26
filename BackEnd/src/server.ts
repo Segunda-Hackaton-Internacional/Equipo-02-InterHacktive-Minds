@@ -13,6 +13,7 @@ import {
   statsRouter,
 } from './presentation/routes';
 import productRouter from './presentation/routes/product.router';
+import materiaPrimaRouter from './presentation/routes/materiaPrima.router';
 
 const app = express();
 
@@ -24,7 +25,7 @@ app.use(`${config.api.conventionApi}/auth`, authRouter);
 app.use(`${config.api.conventionApi}/process`, processRouter);
 app.use(`${config.api.conventionApi}/product`, productRouter);
 app.use(`${config.api.conventionApi}/stats`, statsRouter);
-
+app.use(`${config.api.conventionApi}/materia-prima`, materiaPrimaRouter);
 
 app.get('/', (req, res) => {
   res.send('Servidor Express funcionando correctamente');
