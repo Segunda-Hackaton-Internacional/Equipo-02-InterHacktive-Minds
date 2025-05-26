@@ -13,7 +13,7 @@ export function useProductData() {
     useEffect(() => {
       loadUserProducts();
     }, [loadUserProducts]);
-  
+
     // handleedit
     const handleEdit = async (row: any) => {
       const newName = window.prompt('Nuevo nombre:', row.name);
@@ -39,7 +39,6 @@ export function useProductData() {
 export function useProductTable() {
   
 const { products, handleEdit, handleDelete } = useProductData();
-
 
   // formato
   const usd = (v: number) => 

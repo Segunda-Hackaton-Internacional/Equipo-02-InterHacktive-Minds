@@ -1,4 +1,4 @@
-import { PROCESS_ADD_OK, PROCESS_OK, PROCESS_REQ } from '@/actions/process/processActions';
+import { PROCESS_ADD_OK, PROCESS_DEL_OK, PROCESS_ERR, PROCESS_OK, PROCESS_REQ, PROCESS_UPD_OK } from '@/actions/process/processActions';
 import { AppDispatcher } from '@/dispatcher/AppDispatcher';
 
 import { Listener, SimpleEventEmitter } from '@/lib/utils/eventEmitter';
@@ -26,7 +26,23 @@ export class ProcessStore {
             case PROCESS_ADD_OK:
                 state = { ...state, processes: [...state.processes, action.payload] };
                 break;
-            
+            case PROCESS_UPD_OK:
+                    state = {
+                    ...state,
+                    processes: state.processes.map(p =>
+                    p.id === action.payload.id ? action.payload : p
+                                ),
+                            };
+                            break;
+            case PROCESS_DEL_OK:
+            state = {
+             ...state,
+            processes: state.processes.filter(p => p.id !== action.payload),
+            };
+            break;
+            case PROCESS_ERR:
+                state = { loading: false, processes: [], error: action.error };
+            break;   
         }
         this.emitter.emit();
     };

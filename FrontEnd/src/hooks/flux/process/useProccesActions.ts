@@ -1,6 +1,6 @@
 import { addProcess, loadUserProcess } from "@/actions/process/processThunks";
 
-export const useProductActions = () => ({
+export const useProcessActions = () => ({
     loadUserProcess,
     addProcess
 });

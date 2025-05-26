@@ -1,16 +1,16 @@
 import { AppDispatcher } from "@/dispatcher/AppDispatcher";
 import { axiosApi } from "@/lib/api";
 import { Process } from "@/types/processType";
-import { processErr, processOk, processReq, productAddOk } from "./processActions";
+import { processAddOk, processErr, processOk, processReq } from "./processActions";
 
-const unwrap = (r: any): Process[] =>
-    Array.isArray(r.products) ? r.products : r;
+const unwrap = (r: any): Process[] => 
+    Array.isArray(r.processes) ? r.processes : r;
 
 export const loadUserProcess = async () => {
     AppDispatcher.dispatch(processReq());
     try {
-        const { data } = await axiosApi.get<{ products: Process[] }>('/product/user');
-        console.log(data);
+        const { data } = await axiosApi.get<{processes: Process[] }>('/process/user');
+        console.log('on loadUserProcess', data);
         AppDispatcher.dispatch(processOk(unwrap(data)));
     } catch (e) {
         AppDispatcher.dispatch(processErr((e as Error).message));
@@ -19,5 +19,5 @@ export const loadUserProcess = async () => {
 
 export const addProcess = async (payload: Omit<Process, 'id' | 'totalAmount' | 'userId'>) => {
     const { data } = await axiosApi.post<Process>('/process', payload);
-    AppDispatcher.dispatch(productAddOk(data));
+    AppDispatcher.dispatch(processAddOk(data));
 };
