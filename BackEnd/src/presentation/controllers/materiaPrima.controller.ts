@@ -14,3 +14,14 @@ export const createMateriaPrima = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Error al crear materia prima' });
   }
 };
+
+export const getMateriaPrimaByProveedor = async (req: Request, res: Response) => {
+  try {
+    const proveedorId = req.params.proveedorId;
+    const data = await repo.findByProveedor(proveedorId);
+    res.status(200).json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al obtener materias primas' });
+  }
+};
