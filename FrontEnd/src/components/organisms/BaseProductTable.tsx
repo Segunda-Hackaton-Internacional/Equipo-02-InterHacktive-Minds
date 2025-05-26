@@ -5,9 +5,10 @@ import { useProductsFromProcessTable } from './useProductsFromProcessTable';
 interface BaseProductTableProps {
   headerActions?: React.ReactNode;
   boolType?: boolean;
+  onRowSelected?: (row: any) => void;
 }
 
-export function BaseProductTable({ headerActions, boolType = true }: Readonly<BaseProductTableProps>) {
+export function BaseProductTable({ headerActions, boolType = true, onRowSelected }: Readonly<BaseProductTableProps>) {
   const { tableData, columns } = boolType 
     ? useProductTable() 
     : useProductsFromProcessTable();
@@ -17,6 +18,7 @@ export function BaseProductTable({ headerActions, boolType = true }: Readonly<Ba
       data={tableData}
       columnsConfig={columns}
       headerActions={headerActions}
+      onRowSelected={onRowSelected}
     />
   );
 }

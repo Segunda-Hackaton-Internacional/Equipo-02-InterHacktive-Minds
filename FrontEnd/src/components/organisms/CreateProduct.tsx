@@ -51,7 +51,7 @@ export default function CreateProductModalFormButtom({
   }
 
   const createFields = [
-    [
+    [ 
       {
         type: 'custom',
         key: 'name',
@@ -101,8 +101,5 @@ export default function CreateProductModalFormButtom({
     
   </>
   )
-
-
-
-
+  
 }

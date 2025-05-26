@@ -1,6 +1,6 @@
-import { loadUserProducts } from "@/actions/product/productThunks";
-import { useProductStore } from "@/hooks/flux/product/useProductStore";
-import { useEffect } from "react";
+
+import { Product } from "@/types/productType";
+
 
 export enum Status {
     DISPONIBLE = "DISPONIBLE",
@@ -31,18 +31,10 @@ export function checkDateStatus(targetDate: Date, daysToCheck: number = 30): Sta
 //asignar estados
   export function assignStateToProduct(){
     
-    const { products } = useProductStore();
-    
-      useEffect(() => {
-        loadUserProducts();
-      }, [loadUserProducts]);
-    
-      //Darle Estado a cada producto
-    
-      const productsWithStatus = products.map(product => ({
-        ...product,
-        status: checkDateStatus(new Date(product.expirationDate))
-      }));
+      const productsWithStatus = mockProducts.map(product => ({
+    ...product,
+    status: checkDateStatus(new Date(product.expirationDate))
+  }));
 
       return productsWithStatus;
   }
@@ -64,3 +56,46 @@ export function checkDateStatus(targetDate: Date, daysToCheck: number = 30): Sta
   
     return check >= start && check <= end;
   }
+
+  const mockProducts: Product[] = [
+  {
+    id: '1',
+    userId: 'user123',
+    name: 'Pitahaya',
+    price: 5.99,
+    quantity: 10,
+    expirationDate: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString() 
+  },
+  {
+    id: '2',
+    userId: 'user123',
+    name: 'Pitahaya',
+    price: 5.99,
+    quantity: 5,
+    expirationDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() 
+  },
+  {
+    id: '3',
+    userId: 'user123',
+    name: 'Mango',
+    price: 3.49,
+    quantity: 20,
+    expirationDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString() 
+  },
+  {
+    id: '4',
+    userId: 'user123',
+    name: 'Mango',
+    price: 3.49,
+    quantity: 8,
+    expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() 
+  },
+  {
+    id: '5',
+    userId: 'user123',
+    name: 'Mango',
+    price: 3.49,
+    quantity: 3,
+    expirationDate: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString() 
+  }
+];

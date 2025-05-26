@@ -2,9 +2,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 // Nombre de la materia prima
 const PRODUCT_OPTIONS = [
-  { value: 'Maracuya', label: 'Maracuya' },
-  { value: 'Pitahaya', label: 'Pitahaya' },
-  { value: 'Azucar', label: 'Azucar' },
+  { value: 'Mermelada de Pitahaya y Mango', label: 'Mermelada de Pitahaya y Mango' },
+
 ]
 
 interface MateriaPrimaNombreChooseProps {

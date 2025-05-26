@@ -46,6 +46,7 @@ const materiasPrimasData = Object.values(
   productWithStatus.reduce((acc, product) => {
     // If product doesn't exist in accumulator, initialize it
     acc[product.name] ??= {
+        id: product.id,
         title: product.name,
         statuses: {
           [Status.DISPONIBLE]: 0,
@@ -66,6 +67,7 @@ const materiasPrimasData = Object.values(
         
     return acc;
   }, {} as Record<string, {
+    id: string,
     title: string;
     statuses: Record<Status, number>;
     totalQuantity: number;

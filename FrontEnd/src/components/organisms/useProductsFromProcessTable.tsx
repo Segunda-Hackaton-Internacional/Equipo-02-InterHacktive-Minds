@@ -30,10 +30,11 @@ export function useProductFromProcessData() {
 };
 
         const backendStatus = getBackendStatus(selectedData.option.value);
+        console.log(selectedData.process.deliveryDate)
 
         console.log(selectedData.process.startDate);
         const newStatus = {
-
+          deliveryDate: new Date(),
           status: backendStatus
         };
         try {

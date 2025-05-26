@@ -1,8 +1,8 @@
-import { ProcessModel } from '../models/process.model';   // tu esquema Mongoose
-import { IProductStatsRepository } from '../../../domain/repositories/productStats.repository';
-import { ProductStatsDto } from '../../../application/dtos/stats/productStats.dto';
 import { differenceInCalendarDays, subMonths } from 'date-fns';
 import { Types } from 'mongoose';
+import { ProductStatsDto } from '../../../application/dtos/stats/productStats.dto';
+import { IProductStatsRepository } from '../../../domain/repositories/productStats.repository';
+import { ProcessModel } from '../models/process.model'; // tu esquema Mongoose
 
 export class StatsRepositoryImpl implements IProductStatsRepository {
     async aggregateProductStats(
@@ -24,7 +24,10 @@ export class StatsRepositoryImpl implements IProductStatsRepository {
 
         async function cardsRange(f: Date, t: Date) {
             const [res] = await ProcessModel.aggregate([
-                { $match: { userId: uid, status: 'DELIVERED', deliveryDate: { $gte: f, $lt: t } } },
+                { $match:  { userId: uid, status: 'DELIVERED', $or: [
+                    { startDate: { $gte: from, $lt: to } },  
+                    { status: 'DELIVERED' }                  
+                ]} },
                 {
                     $facet: {
                         orders: [{ $group: { _id: null, count: { $sum: 1 }, sales: { $sum: '$totalAmount' } } }],
@@ -89,7 +92,10 @@ export class StatsRepositoryImpl implements IProductStatsRepository {
 
         // 3. serie temporal
         const lineAgg = await ProcessModel.aggregate([
-            { $match: { userId: uid, deliveryDate: { $gte: from, $lt: to }, status: 'DELIVERED' } },
+            { $match: { userId: uid, status: 'DELIVERED', $or: [
+                    { startDate: { $gte: from, $lt: to } },  
+                    { status: 'DELIVERED' }                  
+                ] } },
             { $unwind: '$items' },
             { $lookup: { from: 'products', localField: 'items.productId', foreignField: '_id', as: 'prod' } },
             { $unwind: '$prod' },

@@ -6,13 +6,15 @@ interface ProductTemplateProps {
   data: any[]
   columnsConfig: ColumnConfig[]
   headerActions?: React.ReactNode
+  onRowSelected?: (row: any) => void;
 }
 
 export default function ProductTemplate({
   data,
   columnsConfig,
   headerActions,
-}: ProductTemplateProps) {
+  onRowSelected
+}: Readonly<ProductTemplateProps>) {
   return (
     <section>
       <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between">
@@ -26,7 +28,11 @@ export default function ProductTemplate({
           </div>
         )}
       </div>
-      <DynamicDataTable data={data} columnsConfig={columnsConfig} />
+      <DynamicDataTable data={data} columnsConfig={columnsConfig} onRowClick={(row) => {
+          console.log(row); 
+          onRowSelected?.(row); 
+        }}
+/>
     </section>
   )
 }

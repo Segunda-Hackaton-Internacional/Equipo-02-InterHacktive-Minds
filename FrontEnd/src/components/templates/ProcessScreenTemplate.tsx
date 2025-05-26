@@ -22,6 +22,7 @@ export function CarouselBasic({ dashboardData, materiasPrimasData }: Readonly<{
     pieSeries: { name: string; value: number }[];
   };
   materiasPrimasData: Array<{
+    id: string
     title: string;
     statuses: Record<Status, number>;
     totalQuantity: number;

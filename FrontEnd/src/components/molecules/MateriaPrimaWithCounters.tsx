@@ -9,6 +9,7 @@ import { LinkedCounters } from "./LinkedCounters";
 
 export function MateriaPrimaWithCounters({ data }: {
   data: Array<{
+    id: string,
     title: string;
     statuses: Record<string, number>;
     totalQuantity: number;
