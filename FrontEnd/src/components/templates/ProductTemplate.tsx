@@ -1,5 +1,5 @@
-import React from 'react'
 import { ColumnConfig } from '@/types/table'
+import React from 'react'
 import { DynamicDataTable } from '../organisms/DynamicDataTable'
 
 interface ProductTemplateProps {

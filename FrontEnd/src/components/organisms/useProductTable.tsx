@@ -89,6 +89,39 @@ function getColumns({
         { label: 'Eliminar', onClick: onDelete },
       ],
     },
+       {
+  id: 'actions',
+  type: 'actions',
+  actionItems: [
+    {
+      label: 'Cambiar Estado',
+      
+      subMenu: [ 
+        {
+          
+          radioGroup: {
+            name: 'process-status', 
+            valueKey: 'status',
+            options: [
+              {
+                value: 'OPERANDO',
+                label: 'Operando',
+                
+              },
+              {
+                value: 'ENVIADO',
+                label: 'Enviado'
+              },
+              {
+                value: 'ENTREGADO',
+                label: 'Entregado'
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]},
     { 
       id: 'choose', 
       type: 'selection',

@@ -2,28 +2,68 @@ import { useProcessActions } from "@/hooks/flux/process/useProccesActions";
 import { useProcessStore } from "@/hooks/flux/process/useProcessStore";
 import { Process } from "@/types/processType";
 import { ColumnConfig } from "@/types/table";
-import { useEffect, useMemo } from "react";
-
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 export function useProductFromProcessData() {
   // Destructure the entire store state
   const { processes, loading, error } = useProcessStore();
-  const { loadUserProcess } = useProcessActions();
+  const { loadUserProcess, updateProcess } = useProcessActions();
+  const { selectedData } = useRadioSelection<Process>();
+  
 
   useEffect(() => {
     loadUserProcess();
   }, [loadUserProcess]);
 
+    useEffect(() => {
+    const updateProcessStatus = async () => {
+      if (selectedData?.process.id && selectedData?.option.value) {
+
+       const getBackendStatus = (frontendStatus: string): string => {
+  const mapping: Record<string, string> = {
+    OPERANDO: 'OPERATING',
+    ENVIADO: 'SENT',
+    ENTREGADO: 'DELIVERED'
+  };
+  
+  return mapping[frontendStatus] ?? frontendStatus;
+};
+
+        const backendStatus = getBackendStatus(selectedData.option.value);
+
+        console.log(selectedData.process.startDate);
+        const newStatus = {
+
+          status: backendStatus
+        };
+        try {
+          await updateProcess(selectedData.process.id, newStatus);
+          console.log('Updated process:', selectedData.process.id, 'to', selectedData.option.value);
+        } catch (err) {
+          console.error('Failed to update process:', err);
+        }
+      }
+    };
+
+    updateProcessStatus();
+  }, [selectedData, updateProcess]);
+
+
+  console.log(selectedData?.process);
+  console.log(selectedData?.option.value)
+
   const handleEdit = async (process: Process) => {
-    console.log("Editing process:", process);
+    console.log("Deleting process:", process);
   };
 
   const handleDelete = async (process: Process) => {
     console.log("Deleting process:", process);
   };
 
+  
+
   return {
-    processes, // This is now properly typed as Process[]
+    processes,
     loading,
     error,
     handleEdit,
@@ -32,7 +72,9 @@ export function useProductFromProcessData() {
 }
 
 export function useProductsFromProcessTable() {
-  const { processes, loading, error, handleEdit, handleDelete } = useProductFromProcessData();
+
+  
+  const { processes, loading, error, handleEdit, handleDelete} = useProductFromProcessData();
 
   console.log('not on use effect', processes)
 
@@ -90,14 +132,90 @@ function getColumns({
     { id: 'startDate', accessorKey: 'startDate', headerLabel: 'Start Date' },
     { id: 'deliveryDate', accessorKey: 'deliveryDate', headerLabel: 'Delivery Date' },
     { id: 'progress', accessorKey: 'progress', headerLabel: 'Progress' },
-    { id: 'status', accessorKey: 'status', headerLabel: 'Status', searchable: true },
+    { id: 'status', accessorKey: 'status', headerLabel: 'Status' },
+   {
+  id: 'actions',
+  type: 'actions',
+  actionItems: [
+    {
+      label: 'Cambiar Estado',
+      
+      subMenu: [ 
+        {
+          
+          radioGroup: {
+            name: 'process-status', 
+            valueKey: 'status',
+            options: [
+              {
+                value: 'OPERANDO',
+                label: 'Operando',
+                
+              },
+              {
+                value: 'ENVIADO',
+                label: 'Enviado'
+              },
+              {
+                value: 'ENTREGADO',
+                label: 'Entregado'
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      label: 'Eliminar',
+      onClick: (row) => onDelete(row)
+    }
+  ]
+},
+    
     {
       id: 'actions',
       type: 'actions',
       actionItems: [
-        { label: 'Editar', onClick: onEdit },
-        { label: 'Eliminar', onClick: onDelete },
+        {label: 'Cambiar Estatus', onClick: onEdit},
+        {label: 'Eliminar', onClick: onDelete}
       ],
     }
   ];
   }
+
+
+
+
+type SelectedProcessData<T = any> = {
+  process: T;
+  option: {
+    value: string;
+    label: string;
+  };
+};
+
+type RadioSelectionContextType<T = any> = {
+  selectedData: SelectedProcessData<T> | null;
+  setSelectedData: (data: SelectedProcessData<T>) => void;
+};
+
+// Create context with generic type
+const RadioSelectionContext = createContext<RadioSelectionContextType<any> | null>(null);
+
+export function useRadioSelection<T>() {
+  const context = useContext(RadioSelectionContext as React.Context<RadioSelectionContextType<T> | null>);
+  if (!context) {
+    throw new Error('useRadioSelection must be used within a RadioSelectionProvider');
+  }
+  return context;
+}
+
+export function RadioSelectionProvider({ children }: { children: React.ReactNode }) {
+  const [selectedData, setSelectedData] = useState<SelectedProcessData<any> | null>(null);
+  
+  return (
+    <RadioSelectionContext.Provider value={{ selectedData, setSelectedData }}>
+      {children}
+    </RadioSelectionContext.Provider>
+  );
+}

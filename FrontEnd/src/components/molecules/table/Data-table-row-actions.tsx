@@ -1,6 +1,3 @@
-import React from "react"
-import { Row } from "@tanstack/react-table"
-import { MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/atoms/ui/button"
 import {
   DropdownMenu,
@@ -9,12 +6,16 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-  DropdownMenuShortcut,
 } from "@/components/atoms/ui/dropdown-menu"
+import { useRadioSelection } from "@/components/organisms/useProductsFromProcessTable"
+import { Row } from "@tanstack/react-table"
+import { MoreHorizontal } from "lucide-react"
+import React from "react"
 
 type RadioGroupConfig = {
   name: string
@@ -40,11 +41,15 @@ export function DataTableRowActions<TData>({
   row,
   actionItems = [],
 }: DataTableRowActionsProps<TData>) {
+  
+  
+
   // Si no hay items, no se muestra nada
   if (!actionItems.length) {
     return null
   }
 
+  const { setSelectedData } = useRadioSelection<TData>();
   const rowData = row.original
 
   return (
@@ -84,8 +89,19 @@ export function DataTableRowActions<TData>({
                                 key={opt.value} 
                                 value={opt.value}
                                 onSelect={() => {
-                                  // Lógica de click en cada radio
-                                  console.log(`Selected ${opt.value} for ${sub.radioGroup?.name}`)
+                                  
+                                   setSelectedData({
+                                  process: rowData,
+                                  option: opt
+                                });
+
+                                if (action.onClick) {
+                                  action.onClick({
+                                    row: rowData,
+                                    option: opt
+                                  });
+                                }
+                                  
                                 }}
                               >
                                 {opt.label}

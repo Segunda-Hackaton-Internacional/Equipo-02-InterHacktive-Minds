@@ -1,5 +1,13 @@
 import { BaseProductTable } from "../organisms/BaseProductTable";
+import { RadioSelectionProvider } from "../organisms/useProductsFromProcessTable";
 
 export default function DespacharScreen() {
-    return <BaseProductTable boolType = {false} />;
+
+    
+
+     return (
+    <RadioSelectionProvider>
+      <BaseProductTable boolType = {false} />;
+    </RadioSelectionProvider>
+  );
   }
