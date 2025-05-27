@@ -1,8 +1,8 @@
-import { MateriaPrimaModel } from '../models/materiaPrima.model';
-import { MateriaPrimaRepository } from '../../../domain/repositories/materiaPrima.repository';
 import { MateriaPrima } from '../../../domain/entities/materiaPrima.entity';
+import { IMateriaPrimaRepository } from '../../../domain/repositories/materiaPrima.repository';
+import { MateriaPrimaModel } from '../models/materiaPrima.model';
 
-export class MateriaPrimaRepositoryImpl implements MateriaPrimaRepository {
+export class MateriaPrimaRepository implements IMateriaPrimaRepository {
   async create(materia: MateriaPrima): Promise<MateriaPrima> {
     const created = await MateriaPrimaModel.create(materia);
     return this.toDomain(created);
@@ -28,7 +28,6 @@ export class MateriaPrimaRepositoryImpl implements MateriaPrimaRepository {
       id: doc._id.toString(),
       tipo: doc.tipo,
       cantidad: doc.cantidad,
-      proveedorId: doc.proveedorId.toString(),
       fechaIngreso: doc.fechaIngreso,
       fechaVencimiento: doc.fechaVencimiento,
       estado: doc.estado,

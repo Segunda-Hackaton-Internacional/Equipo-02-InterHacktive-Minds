@@ -1,9 +1,8 @@
 export interface MateriaPrima {
   id: string;
   tipo: 'mango' | 'pitahaya';
-  cantidad: number; // en kg
-  proveedorId: string;
-  fechaIngreso: Date;
-  fechaVencimiento: Date;
+  cantidad: number; 
+  fechaIngreso: string;
+  fechaVencimiento: string;
   estado: 'disponible' | 'vencida' | 'próxima a vencer';
 }

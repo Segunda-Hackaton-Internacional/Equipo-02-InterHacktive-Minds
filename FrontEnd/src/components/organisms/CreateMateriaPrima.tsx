@@ -1,19 +1,19 @@
-
-import { Product } from '@/types/productType';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '../atoms/ui/button';
 import { Calendar } from '../atoms/ui/calendar';
 import { MateriaPrimaNombreChoose } from '../atoms/ui/choose-materia-prima';
-import ModalForm from './dialogs/ModalForm';
+import ModalForm from './ModalForm';
+
+
 
 interface CreateProductModalFormButtonProps {
-    addProduct: (productData: any) => Promise<Product>;
+    
     ProductOptions?: {value: string, label: string}[];
   }
 
-export default function CreateProductModalFormButtom({
-    addProduct,
+export default function CreateMatPrModalFormButtom({
+    
     ProductOptions
   }: CreateProductModalFormButtonProps){
 
@@ -24,7 +24,7 @@ export default function CreateProductModalFormButtom({
   const [nameTouched, setNameTouched] = useState(false);
   
   
-  const handleCreate = async (data: any) => {
+  const handleCreate = async () => {
     try {
 
       if (!nameTouched) {
@@ -33,20 +33,6 @@ export default function CreateProductModalFormButtom({
         return;
       }
 
-      const finalData = {
-        ...data,
-        expirationDate: expirationDate.toISOString(),
-        name: selectedProduct
-      }
-  
-      console.log(finalData)
-
-      await addProduct(finalData)
-      
-      toast.success('Producto creado')
-      setCreateOpen(false)
-      
-      
     } catch {
       toast.error('Error al crear producto')
     }
@@ -100,7 +86,7 @@ export default function CreateProductModalFormButtom({
       submitButtonText="Crear"
       width="400px"
     />
-    <Button onClick={() => setCreateOpen(true)}>Crear Producto</Button>
+    <Button onClick={() => setCreateOpen(true)}>Crear Materia Prima</Button>
     
   </>
   )

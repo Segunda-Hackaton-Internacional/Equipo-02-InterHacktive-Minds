@@ -9,6 +9,7 @@ const Layout = lazy(() => import("../components/screens/LayoutScreen"));
 const Dashboard = lazy(() => import("../components/screens/DashboardScreen"));
 const Products = lazy(() => import("../components/screens/ProductsScreen"));
 const Proceses = lazy(() => import("../components/screens/ProcessScreen"));
+const ProvMatPr = lazy(() => import("../components/screens/AddMatPrScreen"))
 
 const UnauthorizedErrorScreen = lazy(
   () => import("../components/screens/errors/401")
@@ -59,7 +60,7 @@ export const AppRoutes = () => {
 
             <Route element={<ProveedorRoutes  />}>
               
-              <Route path="proveedorProductos" element={<Products />} />
+              <Route path="proveedorProductos" element={<ProvMatPr />} />
               
             </Route>
           </Route>

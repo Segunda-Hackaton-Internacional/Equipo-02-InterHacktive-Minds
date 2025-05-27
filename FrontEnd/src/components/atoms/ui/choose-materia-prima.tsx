@@ -1,26 +1,27 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/atoms/ui/select';
 
-// Nombre de la materia prima
-const PRODUCT_OPTIONS = [
-  { value: 'Mermelada de Pitahaya y Mango', label: 'Mermelada de Pitahaya y Mango' },
-
-]
 
 interface MateriaPrimaNombreChooseProps {
     value?: string;
     onChange?: (value: string) => void;
     required?: boolean;
     name?: string;
+    ProductOptions?: {value: string, label: string}[];
     onBlur?: () => void; // Add onBlur for form validation
   }
+
+const defaultProps: Partial<MateriaPrimaNombreChooseProps> = {
+    ProductOptions: [{ value: 'Mermelada de Pitahaya y Mango', label: 'Mermelada de Pitahaya y Mango' }]
+};
   
   export function MateriaPrimaNombreChoose({ 
     value, 
     onChange, 
     required,
     name,
-    onBlur
-  }: MateriaPrimaNombreChooseProps) {
+    onBlur,
+    ProductOptions = defaultProps.ProductOptions
+  }: Readonly<MateriaPrimaNombreChooseProps>) {
     return (
       <Select
         value={value}
@@ -33,7 +34,7 @@ interface MateriaPrimaNombreChooseProps {
           <SelectValue placeholder="Seleccione una materia prima" />
         </SelectTrigger>
         <SelectContent>
-          {PRODUCT_OPTIONS.map((option) => (
+          {ProductOptions?.map((option) => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
             </SelectItem>
