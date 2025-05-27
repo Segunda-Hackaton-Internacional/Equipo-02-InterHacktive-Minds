@@ -58,6 +58,21 @@ const headerActions = (
   <CreateMatPrModalFormButtom ProductOptions={matprOptions} />
 );
 
+const column_config = [{ id: 'id', accessorKey: 'id', headerLabel: 'ID', searchable: true },
+    { id: 'name', accessorKey: 'name', headerLabel: 'Nombre', searchable: true },
+    { id: 'price', accessorKey: 'price', headerLabel: 'Precio (USD)' },
+    { id: 'quantity', accessorKey: 'quantity', headerLabel: 'Stock' },
+    { id: 'expirationDate', accessorKey: 'expirationDate', headerLabel: 'Vence' },
+    
+      {
+      id: 'choose', 
+      type: 'selection',
+      headerLabel: 'Nombre', 
+      renderType: 'badgeWithText',
+      searchable: true 
+    }
+  ];
+
 export default function AddMatPrScreen() {
   const { loadAllMatPr } = useMatPrActions();
   const { materias_primas, loading, error } = useMatPrStore(); // Make sure to destructure materias_primas
@@ -86,8 +101,8 @@ export default function AddMatPrScreen() {
 
   return (
     <ProductTemplate 
-      data={materias_primas || []}  // Use the actual data from store
-      columnsConfig={[]} 
+      data={mockProducts || []}  // Use the actual data from store
+      columnsConfig={column_config} 
       headerActions={headerActions}
     />
   );
