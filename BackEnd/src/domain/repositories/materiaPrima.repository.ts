@@ -1,8 +1,6 @@
 import { MateriaPrima } from '../entities/materiaPrima.entity';
 
 export interface IMateriaPrimaRepository {
-  create(materia: MateriaPrima): Promise<MateriaPrima>;
-  update(id: string, materia: Partial<MateriaPrima>): Promise<MateriaPrima | null>;
-  findByProveedor(proveedorId: string): Promise<MateriaPrima[]>;
+  create(materia: Omit<MateriaPrima, 'id'>): Promise<MateriaPrima>;
   findAll(): Promise<MateriaPrima[]>;
 }

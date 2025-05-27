@@ -1,29 +1,35 @@
-export interface CreateMateriaPrimaDTO {
-  tipo: 'mango' | 'pitahaya';
-  cantidad: number;
-  fechaIngreso: string; // ISO string (viene de formularios/JSON) es decir, para la fechas se envían como string ISO  y luego se transforman a objetos Date
-  fechaVencimiento: string;
-}
+// src/application/dtos/product.dto.ts
 
-export interface MateriaPrimaResponseDto {
-  id: string;
-  tipo: string;
-  cantidad: number;
-  fechaIngreso: string;
-  fechaVencimiento: string;
-  estado: string;
-}
+import { Static, Type } from '@sinclair/typebox';
 
-export interface MateriaPrimaListDto {
-  materiasPrimas: MateriaPrimaResponseDto[];
-  timestamp: string;
-}
+// 1. LO QUE ENTRA: creación y actualización
+export const CreateMateriaPrimaSchema = Type.Object({
+  name:           Type.String(),
+  price:          Type.Number(),           // USD, decimal
+  quantity:       Type.Number(),           // stock disponible
+  expirationDate: Type.Date()              // fecha futura
+});
+export type CreateMateriaPrimaDto = Static<typeof CreateMateriaPrimaSchema>;
 
-/*
-export interface UpdateMateriaPrimaDTO {
-  tipo?: 'mango' | 'pitahaya';
-  cantidad?: number;
-  proveedorId?: string;
-  fechaIngreso?: string;
-  fechaVencimiento?: string;
-}*/
+export const UpdateMateriaPrimaSchema = Type.Partial(CreateMateriaPrimaSchema, {
+  description: 'Campos opcionales para actualizar un producto'
+});
+export type UpdateMateriaPrimaDto = Static<typeof UpdateMateriaPrimaSchema>;
+
+
+// 2. LO QUE SALE: respuesta de un producto o lista
+
+export const MateriaPrimaResponseSchema = Type.Object({
+  id:             Type.String(),           // virtual de Mongo
+  userId:         Type.String(),
+  name:           Type.String(),
+  price:          Type.Number(),
+  quantity:       Type.Number(),
+  expirationDate: Type.Date()
+});
+export type MateriaPrimaResponseDto = Static<typeof MateriaPrimaResponseSchema>;
+
+export const MateriaPrimaListSchema = Type.Object({
+  products: Type.Array(MateriaPrimaResponseSchema)
+});
+export type MateriaPrimaListDto = Static<typeof MateriaPrimaListSchema>;

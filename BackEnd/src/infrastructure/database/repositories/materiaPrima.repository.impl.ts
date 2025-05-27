@@ -1,36 +1,29 @@
-import { MateriaPrima } from '../../../domain/entities/materiaPrima.entity';
+import { Types } from 'mongoose';
+import { MatPr } from '../../../domain/entities/materiaPrima.entity';
 import { IMateriaPrimaRepository } from '../../../domain/repositories/materiaPrima.repository';
-import { MateriaPrimaModel } from '../models/materiaPrima.model';
+import { MateriaPrimaLean, MateriaPrimaModel } from '../models/materiaPrima.model';
 
 export class MateriaPrimaRepository implements IMateriaPrimaRepository {
-  async create(materia: MateriaPrima): Promise<MateriaPrima> {
-    const created = await MateriaPrimaModel.create(materia);
-    return this.toDomain(created);
+  async findAll(): Promise<MatPr[]> {
+    const docs = await MateriaPrimaModel.find().lean<MateriaPrimaLean[]>().exec();
+    return docs.map(doc => this.toDomain(doc));
   }
 
-  async update(id: string, materia: Partial<MateriaPrima>): Promise<MateriaPrima | null> {
-    const updated = await MateriaPrimaModel.findByIdAndUpdate(id, materia, { new: true });
-    return updated ? this.toDomain(updated) : null;
+  async create(data: Omit<MatPr, 'id'>): Promise<MatPr> {
+    const created = await MateriaPrimaModel.create(data);
+    const doc = created.toObject() as MateriaPrimaLean;
+    return this.toDomain(doc);
   }
 
-  async findByProveedor(proveedorId: string): Promise<MateriaPrima[]> {
-    const docs = await MateriaPrimaModel.find({ proveedorId });
-    return docs.map(this.toDomain);
-  }
-
-  async findAll(): Promise<MateriaPrima[]> {
-    const docs = await MateriaPrimaModel.find();
-    return docs.map(this.toDomain);
-  }
-
-  private toDomain(doc: any): MateriaPrima {
+  /** Mapea un objeto lean (POJO) a la entidad de dominio */
+  private toDomain(doc: MateriaPrimaLean): MatPr {
     return {
-      id: doc._id.toString(),
-      tipo: doc.tipo,
-      cantidad: doc.cantidad,
-      fechaIngreso: doc.fechaIngreso,
-      fechaVencimiento: doc.fechaVencimiento,
-      estado: doc.estado,
+      id:             doc._id.toHexString(),
+      userId:         (doc.userId as Types.ObjectId).toHexString(),
+      name:           doc.name,
+      price:          doc.price,
+      quantity:       doc.quantity,
+      expirationDate: doc.expirationDate
     };
   }
 }

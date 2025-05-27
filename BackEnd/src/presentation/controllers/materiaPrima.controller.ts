@@ -1,14 +1,15 @@
-// src/infrastructure/controllers/materia-prima.controller.ts
-import { NextFunction, Request, Response } from 'express';
-import { CreateMateriaPrimaDTO, MateriaPrimaListDto, MateriaPrimaResponseDto } from '../../application/dtos/materiaPrima.dto';
-import { CreateMateriaPrimaUseCase, GetAllMateriasPrimasUseCase } from '../../application/useCases/materiaprima/createMateriaPrima.useCase';
-
+import { NextFunction, Request, Response } from "express";
+import { CreateMateriaPrimaDto, MateriaPrimaListDto, MateriaPrimaResponseDto } from "../../application/dtos/materiaPrima.dto";
+import { CreateMateriaPrimaUseCase } from "../../application/useCases/materiaprima/createMateriaPrima.useCase";
+import { GetAllMateriaPrimaUseCase } from "../../application/useCases/materiaprima/getAllMateriaPrima.useCase";
 
 
 export class MateriaPrimaController {
+
   constructor(
     private readonly createUseCase: CreateMateriaPrimaUseCase,
-    private readonly getAllUseCase: GetAllMateriasPrimasUseCase
+    private readonly getAllUseCase: GetAllMateriaPrimaUseCase,
+    
   ) {}
 
   public create = async (
@@ -17,9 +18,10 @@ export class MateriaPrimaController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const dto = req.body as CreateMateriaPrimaDTO;
-      const materiaPrima = await this.createUseCase.execute(dto);
-      res.status(201).json(this.toResponseDto(materiaPrima));
+      const userId = req.user!.id;      
+      const dto = req.body as CreateMateriaPrimaDto;
+      const product = await this.createUseCase.execute(userId,dto);
+      res.status(201).json(this.toResponseDto(product));
     } catch (error) {
       next(error);
     }
@@ -31,32 +33,31 @@ export class MateriaPrimaController {
     next: NextFunction
   ): Promise<void> => {
     try {
-      const materiasPrimas = await this.getAllUseCase.execute();
-      res.status(200).json(this.toListDto(materiasPrimas));
+      const products = await this.getAllUseCase.execute();
+      res.status(200).json(this.toListDto(products));
     } catch (error) {
       next(error);
     }
   };
 
-  private toResponseDto(materia: any): MateriaPrimaResponseDto {
-    return {
-      id: materia.id,
-      tipo: materia.tipo,
-      cantidad: materia.cantidad,
-      fechaIngreso: materia.fechaIngreso.toISOString(),
-      fechaVencimiento: materia.fechaVencimiento.toISOString(),
-      estado: materia.estado
-    };
-  }
+  private toResponseDto(product: any): MateriaPrimaResponseDto {
+      return {
+        id:             product.id,
+        userId:         product.userId,
+        name:           product.name,
+        price:          product.price,
+        quantity:       product.quantity,
+        expirationDate: product.expirationDate,
+      };
+    }
+  
+    // --- Helper interno para mapear arreglo de BaseProduct a ProductsListDto ---
+    private toListDto(products: any[]): MateriaPrimaListDto{
+      return {
+        products: products.map(p => this.toResponseDto(p))
+      };
+    }
 
-  private toListDto(materias: any[]): MateriaPrimaListDto {
-    return {
-      materiasPrimas: materias.map(m => this.toResponseDto(m)),
-      timestamp: new Date().toISOString()
-    };
-  }
 }
-
-
 
 

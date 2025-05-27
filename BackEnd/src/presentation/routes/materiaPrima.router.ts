@@ -1,20 +1,25 @@
 import { Router } from 'express';
-import { CreateMateriaPrimaUseCase, GetAllMateriasPrimasUseCase } from '../../application/useCases/materiaprima/createMateriaPrima.useCase';
+
+import { CreateMateriaPrimaUseCase } from '../../application/useCases/materiaprima/createMateriaPrima.useCase';
+import { GetAllMateriaPrimaUseCase } from '../../application/useCases/materiaprima/getAllMateriaPrima.useCase';
 import { MateriaPrimaRepository } from '../../infrastructure/database/repositories/materiaPrima.repository.impl';
 import { MateriaPrimaController } from '../controllers/materiaPrima.controller';
 import { validateRoleMiddleware } from '../middleware/jwtMiddleware';
 
-
 const router = Router();
+const repository = new MateriaPrimaRepository();
 
-const matPrProcess = new MateriaPrimaRepository()
+const createUseCase = new CreateMateriaPrimaUseCase(repository);
+const getAllUseCase = new GetAllMateriaPrimaUseCase(repository);
+
 const controller = new MateriaPrimaController(
-    new CreateMateriaPrimaUseCase(matPrProcess), 
-    new GetAllMateriasPrimasUseCase(matPrProcess)
+  createUseCase,
+  getAllUseCase,
+  
 );
 
-// POST /api/materia-prima
-router.get("/", validateRoleMiddleware(['PROVEEDOR']), controller.create);
+router.post('/', validateRoleMiddleware(['OPERATOR', 'ADMIN', 'PROVEEDOR']) ,controller.create);
+router.get('/', validateRoleMiddleware(['OPERATOR', 'ADMIN', 'PROVEEDOR']) ,controller.getAll);
+
 
 export default router;
-//http://localhost:3000/api/materia-prima
