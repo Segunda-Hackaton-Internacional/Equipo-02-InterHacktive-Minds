@@ -1,7 +1,7 @@
 import { MateriaPrimaModel } from '../models/materiaPrima.model';
 import { MateriaPrimaRepository } from '../../../domain/repositories/materiaPrima.repository';
 import { MateriaPrima } from '../../../domain/entities/materiaPrima.entity';
-
+import { Types } from 'mongoose';
 export class MateriaPrimaRepositoryImpl implements MateriaPrimaRepository {
   async create(materia: MateriaPrima): Promise<MateriaPrima> {
     const created = await MateriaPrimaModel.create(materia);
@@ -9,7 +9,11 @@ export class MateriaPrimaRepositoryImpl implements MateriaPrimaRepository {
   }
 
   async update(id: string, materia: Partial<MateriaPrima>): Promise<MateriaPrima | null> {
-    const updated = await MateriaPrimaModel.findByIdAndUpdate(id, materia, { new: true });
+   const updated = await MateriaPrimaModel.findOneAndUpdate(
+  { _id: new Types.ObjectId(id) },
+  materia,
+  { new: true }
+);
     return updated ? this.toDomain(updated) : null;
   }
 

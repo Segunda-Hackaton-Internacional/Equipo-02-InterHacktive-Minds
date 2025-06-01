@@ -25,3 +25,24 @@ export const getMateriaPrimaByProveedor = async (req: Request, res: Response) =>
     res.status(500).json({ error: 'Error al obtener materias primas' });
   }
 };
+
+export const updateMateriaPrima = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const update = req.body;
+
+    console.log('Intentando actualizar ID:', id);
+const updated = await repo.update(id, update);
+console.log('Resultado:', updated);
+
+
+    if (!updated) {
+      return res.status(404).json({ error: 'Materia prima no encontrada' });
+    }
+
+    res.status(200).json(updated);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al actualizar materia prima' });
+  }
+};
